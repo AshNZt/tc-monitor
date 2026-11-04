@@ -85,6 +85,38 @@
     return `<svg class="sparkline" viewBox="0 0 ${width} ${height}" role="img" aria-label="Monthly text changes, last 12 months"><polygon class="area" points="${pad},${height - pad} ${pts} ${width - pad},${height - pad}"/><polyline class="line" points="${pts}"/></svg>`;
   }
 
+  // Stacked monthly bar chart. series: [{key, name, color}], keyOf(change) -> series key
+  function stackedChart(series, list, keyOf, linkOf, n = 24) {
+    const months = lastMonths(n);
+    const counts = Object.fromEntries(months.map((m) => [m, Object.fromEntries(series.map((x) => [x.key, 0]))]));
+    list.forEach((c) => { const m = counts[monthKey(c.date)]; const k = keyOf(c); if (m && k in m) m[k]++; });
+    const totals = months.map((m) => Object.values(counts[m]).reduce((a, b) => a + b, 0));
+    const step = Math.max(1, Math.ceil(Math.max(...totals, 4) / 4)), top = step * 4;
+    const bars = months.map((m, i) => {
+      const segs = series.map((x) => {
+        const v = counts[m][x.key];
+        return v ? `<span class="segment" style="height:${v / top * 100}%;background:${x.color}" title="${esc(x.name)}: ${v}"></span>` : "";
+      }).join("");
+      return `<a class="bar-column" href="${linkOf(m)}" style="--height:${totals[i] / top * 100}%">${segs}<span class="bar-label">${monthLabel(m)}</span><span class="chart-tooltip">${monthLabel(m)} · ${totals[i]} change${totals[i] === 1 ? "" : "s"}</span></a>`;
+    }).join("");
+    return {
+      legend: `<div class="legend" aria-label="Chart legend">${series.map((x) => `<span class="legend-item"><i style="background:${x.color}"></i>${esc(x.name)}</span>`).join("")}</div>`,
+      html: `<article class="chart-card">
+          <div class="chart-meta">
+            <div><span>Total changes</span><strong>${totals.reduce((a, b) => a + b, 0)}</strong></div>
+            <div class="chart-window"><span>${monthLabel(months[0])}</span><i></i><span>${monthLabel(months[n - 1])}</span></div>
+          </div>
+          <div class="chart-wrap">
+            <div class="y-axis" aria-hidden="true">${[4, 3, 2, 1, 0].map((k) => `<span>${k * step}</span>`).join("")}</div>
+            <div class="stacked-chart" role="img" aria-label="Stacked bar chart of monthly text changes over the last ${n} months">${bars}</div>
+          </div>
+        </article>`,
+    };
+  }
+
+  // shades of one platform colour, one per service
+  const shade = (color, i, n) => n < 2 ? color : `color-mix(in srgb, ${color}, ${i % 2 ? "#ffffff" : "#000000"} ${Math.round(12 + 50 * i / n)}%)`;
+
   // ---------- Overview ----------
   function viewHome() {
     const { index, changes } = state;
@@ -96,22 +128,8 @@
     const latest = subst[0];
     const stale = index.status.filter((s) => s.stale);
 
-    // stacked chart data
     const months = lastMonths(24);
-    const counts = Object.fromEntries(months.map((m) => [m, Object.fromEntries(index.platforms.map((p) => [p.id, 0]))]));
-    subst.forEach((c) => { const m = counts[monthKey(c.date)]; if (m && c.platform in m) m[c.platform]++; });
-    const totals = months.map((m) => Object.values(counts[m]).reduce((a, b) => a + b, 0));
-    const step = Math.max(1, Math.ceil(Math.max(...totals, 4) / 4));
-    const top = step * 4;
-    const total24 = totals.reduce((a, b) => a + b, 0);
-
-    const bars = months.map((m, i) => {
-      const segs = index.platforms.map((p) => {
-        const v = counts[m][p.id];
-        return v ? `<span class="segment" style="height:${v / top * 100}%;background:${p.color}" title="${esc(p.name)}: ${v}"></span>` : "";
-      }).join("");
-      return `<a class="bar-column" href="#/changes?month=${m}" style="--height:${totals[i] / top * 100}%">${segs}<span class="bar-label">${monthLabel(m)}</span><span class="chart-tooltip">${monthLabel(m)} · ${totals[i]} change${totals[i] === 1 ? "" : "s"}</span></a>`;
-    }).join("");
+    const chart = stackedChart(index.platforms.map((p) => ({ key: p.id, name: p.name, color: p.color })), subst, (c) => c.platform, (m) => `#/changes?month=${m}`);
 
     const cards = index.platforms.map((p) => {
       const ps = subst.filter((c) => c.platform === p.id);
@@ -120,7 +138,7 @@
       return `<article class="platform-card" style="--platform:${p.color};--platform-dark:color-mix(in srgb, ${p.color}, #000 25%)">
         <div class="platform-accent"></div>
         <div class="platform-body">
-          <div class="platform-title"><div class="monogram" aria-hidden="true">${esc(p.monogram)}</div><div><h3>${esc(p.name)}</h3><p>${p.documents.length} documents · ${p.services.length} service${p.services.length > 1 ? "s" : ""}</p></div></div>
+          <a class="platform-title" href="#/platform/${p.id}"><div class="monogram" aria-hidden="true">${esc(p.monogram)}</div><div><h3>${esc(p.name)}</h3><p>${p.documents.length} documents · ${p.services.length} service${p.services.length > 1 ? "s" : ""}</p></div></a>
           <div class="chips">${p.services.map((s) => `<span class="chip">${esc(s)}</span>`).join("")}</div>
           <div class="platform-metrics">
             <div class="metric"><span>Documents<br>tracked</span><strong>${p.documents.length}</strong></div>
@@ -131,7 +149,7 @@
           <p class="recent-label">Most recent changes</p>
           <div>${recent.length ? recent.map((c) => `<a class="mini-change" href="#/change/${enc(c.id)}"><span class="mini-date">${short(c.date)}<br>${new Date(c.date).getFullYear()}</span><div class="mini-doc"><strong>${esc(c.document)}</strong><span>${esc(c.sections[0] || "")}</span></div><span class="diff"><span class="plus">+${c.added}</span><span class="minus">−${c.removed}</span></span></a>`).join("")
             : `<p class="muted small">No text changes recorded yet.</p>`}</div>
-          <a class="platform-link" href="#/changes?platform=${p.id}">View all changes <span>→</span></a>
+          <a class="platform-link" href="#/platform/${p.id}">Open platform details <span>→</span></a>
         </div>
       </article>`;
     }).join("");
@@ -161,18 +179,9 @@
       <section class="shell section-block" id="activity">
         <div class="section-heading">
           <div><p class="eyebrow">24-month view</p><h2>Activity by platform</h2><p>Monthly number of text changes. Click a month to see its changes.</p></div>
-          <div class="legend" aria-label="Chart legend">${index.platforms.map((p) => `<span class="legend-item"><i style="background:${p.color}"></i>${esc(p.name)}</span>`).join("")}</div>
+          ${chart.legend}
         </div>
-        <article class="chart-card">
-          <div class="chart-meta">
-            <div><span>Total changes</span><strong>${total24}</strong></div>
-            <div class="chart-window"><span>${monthLabel(months[0])}</span><i></i><span>${monthLabel(months[23])}</span></div>
-          </div>
-          <div class="chart-wrap">
-            <div class="y-axis" aria-hidden="true">${[4, 3, 2, 1, 0].map((k) => `<span>${k * step}</span>`).join("")}</div>
-            <div class="stacked-chart" role="img" aria-label="Stacked bar chart of monthly text changes per platform over the last 24 months">${bars}</div>
-          </div>
-        </article>
+        ${chart.html}
       </section>
 
       <section class="shell section-block" id="platforms">
@@ -211,6 +220,97 @@
     };
     document.getElementById("exportButton").onclick = () => exportCSV(subst, "tc-monitor-changes.csv");
     renderFeed();
+  }
+
+  // ---------- Platform detail ----------
+  function viewPlatform(id) {
+    const p = state.platforms[id];
+    if (!p) return notFound();
+    const all = state.changes.filter((c) => c.platform === id);
+    const subst = all.filter((c) => c.type === "substantive");
+    const last90 = subst.filter((c) => daysAgo(c.date) <= 90).length;
+    const last365 = subst.filter((c) => daysAgo(c.date) <= 365).length;
+    const since = p.documents.map((d) => d.tracked_since).filter(Boolean).sort()[0];
+    const series = p.services.map((s, i) => ({ key: s, name: s, color: shade(p.color, i, p.services.length) }));
+    const chart = stackedChart(series, subst, (c) => c.service, (m) => `#/changes?platform=${id}&month=${m}`);
+    const st = state.index.status.find((x) => x.platform === id);
+
+    // most changed sections in the last 12 months
+    const secCount = {};
+    subst.filter((c) => daysAgo(c.date) <= 365).forEach((c) => c.sections.forEach((x) => { secCount[x] = (secCount[x] || 0) + 1; }));
+    const topSecs = Object.entries(secCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+    const docTable = p.services.map((svc) => {
+      const docs = p.documents.filter((d) => d.service === svc)
+        .sort((a, b) => (b.last_substantive_change || "").localeCompare(a.last_substantive_change || ""));
+      return `<tbody>
+        ${p.services.length > 1 ? `<tr class="svc-row"><td colspan="5">${esc(svc)}</td></tr>` : ""}
+        ${docs.map((d) => {
+          const n90 = subst.filter((c) => c.doc_id === d.id && daysAgo(c.date) <= 90).length;
+          return `<tr>
+            <td><a href="#/doc/${enc(d.id)}">${esc(p.services.length > 1 && d.name.startsWith(svc + " ") ? d.name.slice(svc.length + 1) : d.name)}</a></td>
+            <td>${d.last_substantive_change ? fmtDate(d.last_substantive_change) : "–"}</td>
+            <td class="num">${n90 || "–"}</td>
+            <td class="num">${d.substantive_changes}</td>
+            <td class="muted">${esc(d.declared_dates.slice(0, 2).join(", ") || "–")}</td>
+          </tr>`;
+        }).join("")}
+      </tbody>`;
+    }).join("");
+
+    app.innerHTML = `
+      <section class="shell page-head" style="--platform:${p.color};--platform-dark:color-mix(in srgb, ${p.color}, #000 25%)">
+        <div class="crumbs"><a href="#/">Overview</a> › ${esc(p.name)}</div>
+        <div class="platform-hero">
+          <div class="monogram big" aria-hidden="true">${esc(p.monogram)}</div>
+          <div>
+            <h1>${esc(p.name)}</h1>
+            <div class="chips">${p.services.map((s, i) => `<span class="chip"><i style="background:${series[i].color}"></i>${esc(s)}</span>`).join("")}</div>
+          </div>
+        </div>
+        ${st && st.stale ? `<div class="notice">The source for ${esc(p.name)} has not recorded anything for ${st.age_days ?? "many"} days. Recent changes may be missing.</div>` : ""}
+      </section>
+
+      <section class="shell summary-grid" aria-label="${esc(p.name)} summary">
+        <article class="summary-card"><div><p>Documents tracked</p><strong>${p.documents.length}</strong><span>${p.services.length} service${p.services.length > 1 ? "s" : ""}</span></div></article>
+        <article class="summary-card"><div><p>Text changes · last 90 days</p><strong>${last90}</strong><span>${last365} in the last 12 months</span></div></article>
+        <article class="summary-card"><div><p>Latest change</p>${subst[0] ? `<a href="#/change/${enc(subst[0].id)}"><strong class="date-value">${fmtDate(subst[0].date)}</strong><span>${esc(subst[0].document)}</span></a>` : "<strong>–</strong>"}</div></article>
+        <article class="summary-card"><div><p>Tracked since</p><strong class="date-value">${fmtDate(since)}</strong><span>${subst.length} text changes in total</span></div></article>
+      </section>
+
+      <section class="shell section-block">
+        <div class="section-heading">
+          <div><p class="eyebrow">24-month view</p><h2>Activity${p.services.length > 1 ? " by service" : ""}</h2><p>Monthly number of text changes. Click a month to see its changes.</p></div>
+          ${p.services.length > 1 ? chart.legend : ""}
+        </div>
+        ${chart.html}
+      </section>
+
+      <section class="shell section-block">
+        <div class="section-heading compact"><div><p class="eyebrow">Documents</p><h2>What is tracked</h2><p>Sorted by most recent text change${p.services.length > 1 ? ", grouped by service" : ""}.</p></div></div>
+        <div class="card table-wrap"><table class="doc-table">
+          <thead><tr><th>Document</th><th>Last text change</th><th class="num">90 days</th><th class="num">Total</th><th>Date stated in document</th></tr></thead>
+          ${docTable}
+        </table></div>
+      </section>
+
+      ${topSecs.length ? `<section class="shell section-block">
+        <div class="section-heading compact"><div><p class="eyebrow">Hotspots</p><h2>Most changed sections</h2><p>Sections with the most text changes in the last 12 months.</p></div></div>
+        <div class="card pad hotspots">${topSecs.map(([name, n]) => `<a class="hot" href="#/changes?platform=${id}&q=${enc(name)}"><span>${esc(name)}</span><b>${n}</b></a>`).join("")}</div>
+      </section>` : ""}
+
+      <section class="shell section-block">
+        <div class="section-heading compact feed-heading">
+          <div><p class="eyebrow">Change log</p><h2>Recent changes</h2><p>The latest text changes for ${esc(p.name)}.</p></div>
+          <button class="export-button" type="button" id="exportButton"><svg viewBox="0 0 24 24"><path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3"/></svg>Export</button>
+        </div>
+        <article class="feed-card">
+          <div class="feed-labels" aria-hidden="true"><span>Date</span><span>Platform &amp; document</span><span>Affected sections</span><span>Change</span></div>
+          <div class="feed">${subst.slice(0, 15).map(feedRow).join("") || `<div class="empty-state">No text changes recorded yet.</div>`}</div>
+          <div class="feed-footer"><span>Showing ${Math.min(15, subst.length)} of ${subst.length} changes</span><a href="#/changes?platform=${id}">View full change log <span>→</span></a></div>
+        </article>
+      </section>`;
+    document.getElementById("exportButton").onclick = () => exportCSV(subst, `tc-monitor-${id}.csv`);
   }
 
   // ---------- Change log ----------
@@ -365,7 +465,7 @@
 
     app.innerHTML = `
       <section class="shell page-head">
-        <div class="crumbs"><a href="#/changes?platform=${p.id || ""}">${esc(p.name)}</a> › <a href="#/doc/${enc(c.doc_id)}">${esc(c.document)}</a></div>
+        <div class="crumbs"><a href="#/">Overview</a> › <a href="#/platform/${p.id || ""}">${esc(p.name)}</a> › <a href="#/doc/${enc(c.doc_id)}">${esc(c.document)}</a></div>
         <p class="eyebrow" style="color:${p.color} !important">${esc(p.name)}</p>
         <h1>${esc(c.document)} ${typeTag(c.type)}</h1>
         <div class="meta-row">
@@ -393,7 +493,7 @@
     const list = state.changes.filter((c) => c.doc_id === id && !MINOR.has(c.type));
     app.innerHTML = `
       <section class="shell page-head">
-        <div class="crumbs"><a href="#/">Overview</a> › <a href="#/changes?platform=${d.platform.id}">${esc(d.platform.name)}</a></div>
+        <div class="crumbs"><a href="#/">Overview</a> › <a href="#/platform/${d.platform.id}">${esc(d.platform.name)}</a></div>
         <p class="eyebrow" style="color:${d.platform.color} !important">${esc(d.platform.name)}</p>
         <h1>${esc(d.name)}</h1>
         <div class="meta-row">
@@ -440,13 +540,14 @@
   async function route() {
     const [path, qs] = location.hash.replace(/^#/, "").split("?");
     const parts = (path || "/").split("/").filter(Boolean);
-    const section = !parts.length ? "home" : ["changes", "change"].includes(parts[0]) ? "changes" : parts[0];
+    const section = !parts.length || ["platform", "doc"].includes(parts[0]) ? "home" : ["changes", "change"].includes(parts[0]) ? "changes" : parts[0];
     document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.nav === section));
     try {
       if (!parts.length) viewHome();
       else if (parts[0] === "changes") viewChanges(new URLSearchParams(qs || ""));
       else if (parts[0] === "change") await viewChange(decodeURIComponent(parts[1]));
       else if (parts[0] === "doc") await viewDoc(decodeURIComponent(parts[1]));
+      else if (parts[0] === "platform") viewPlatform(decodeURIComponent(parts[1] || ""));
       else if (parts[0] === "about") viewAbout();
       else notFound();
     } catch (e) {
