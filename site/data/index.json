@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-04T13:46:07+00:00",
+ "generated_at": "2026-11-04T14:26:47+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -8,18 +8,25 @@
   {
    "id": "openai",
    "name": "OpenAI",
-   "service": "ChatGPT",
-   "source": "https://github.com/OpenTermsArchive/GenAI-versions",
-   "declarations": "https://github.com/OpenTermsArchive/GenAI-declarations/blob/main/declarations/ChatGPT.json",
+   "color": "#4e8f80",
+   "monogram": "OA",
+   "services": [
+    "ChatGPT"
+   ],
+   "sources": [
+    "https://github.com/OpenTermsArchive/GenAI-versions"
+   ],
+   "declarations": null,
    "documents": [
     {
      "id": "openai--acceptable-use-policy",
      "name": "Acceptable Use Policy",
+     "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:08Z",
      "last_change": "2026-01-31T07:00:28Z",
-     "last_substantive_change": "2026-01-31T07:00:28Z",
+     "last_substantive_change": "2025-12-06T07:10:10Z",
      "versions": 28,
-     "substantive_changes": 26,
+     "substantive_changes": 19,
      "declared_dates": [
       "October 29, 2025",
       "July 17, 2025",
@@ -32,11 +39,12 @@
     {
      "id": "openai--business-privacy-policy",
      "name": "Business Privacy Policy",
+     "service": "ChatGPT",
      "tracked_since": "2025-07-31T12:06:33Z",
      "last_change": "2026-07-25T19:01:31Z",
      "last_substantive_change": "2026-07-25T19:01:31Z",
      "versions": 11,
-     "substantive_changes": 8,
+     "substantive_changes": 6,
      "declared_dates": [
       "January 8, 2026"
      ],
@@ -46,11 +54,12 @@
     {
      "id": "openai--commercial-terms",
      "name": "Commercial Terms",
+     "service": "ChatGPT",
      "tracked_since": "2025-07-31T12:06:07Z",
      "last_change": "2026-08-18T19:01:23Z",
-     "last_substantive_change": "2026-08-18T19:01:23Z",
+     "last_substantive_change": "2026-07-15T19:01:16Z",
      "versions": 13,
-     "substantive_changes": 11,
+     "substantive_changes": 8,
      "declared_dates": [
       "1 December 2025"
      ],
@@ -60,11 +69,12 @@
     {
      "id": "openai--data-processor-agreement",
      "name": "Data Processor Agreement",
+     "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:10Z",
      "last_change": "2026-07-15T19:01:12Z",
      "last_substantive_change": "2025-12-01T19:00:17Z",
      "versions": 16,
-     "substantive_changes": 12,
+     "substantive_changes": 9,
      "declared_dates": [
       "1 December 2025"
      ],
@@ -74,11 +84,12 @@
     {
      "id": "openai--developer-terms",
      "name": "Developer Terms",
+     "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:06Z",
      "last_change": "2026-09-29T07:00:46Z",
      "last_substantive_change": "2026-09-29T07:00:46Z",
      "versions": 18,
-     "substantive_changes": 16,
+     "substantive_changes": 9,
      "declared_dates": [
       "28 September 2026"
      ],
@@ -88,11 +99,12 @@
     {
      "id": "openai--in-app-purchases-policy",
      "name": "In-App Purchases Policy",
+     "service": "ChatGPT",
      "tracked_since": "2025-07-31T12:05:59Z",
      "last_change": "2026-07-15T19:01:08Z",
      "last_substantive_change": "2026-01-02T07:08:57Z",
      "versions": 6,
-     "substantive_changes": 3,
+     "substantive_changes": 1,
      "declared_dates": [
       "1 January 2026"
      ],
@@ -102,11 +114,12 @@
     {
      "id": "openai--platform-to-business-notice",
      "name": "Platform to Business Notice",
+     "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:12Z",
      "last_change": "2025-06-21T00:30:29Z",
      "last_substantive_change": "2025-06-21T00:30:29Z",
      "versions": 14,
-     "substantive_changes": 13,
+     "substantive_changes": 11,
      "declared_dates": [
       "May 31, 2025"
      ],
@@ -116,11 +129,12 @@
     {
      "id": "openai--privacy-policy",
      "name": "Privacy Policy",
+     "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:04Z",
      "last_change": "2026-09-22T19:00:30Z",
-     "last_substantive_change": "2026-09-22T19:00:30Z",
+     "last_substantive_change": "2026-08-25T07:00:23Z",
      "versions": 21,
-     "substantive_changes": 19,
+     "substantive_changes": 13,
      "declared_dates": [
       "24 August 2026",
       "13 March 2026"
@@ -131,11 +145,12 @@
     {
      "id": "openai--terms-of-service",
      "name": "Terms of Service",
+     "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:01Z",
      "last_change": "2026-10-16T19:00:15Z",
      "last_substantive_change": "2026-10-16T19:00:15Z",
      "versions": 63,
-     "substantive_changes": 61,
+     "substantive_changes": 20,
      "declared_dates": [
       "16 January 2026",
       "16 October 2026"
@@ -146,11 +161,12 @@
     {
      "id": "openai--trackers-policy",
      "name": "Trackers Policy",
+     "service": "ChatGPT",
      "tracked_since": "2025-07-31T12:06:45Z",
      "last_change": "2026-10-23T19:01:50Z",
      "last_substantive_change": "2026-10-23T19:01:50Z",
      "versions": 21,
-     "substantive_changes": 19,
+     "substantive_changes": 16,
      "declared_dates": [
       "22 October 2026"
      ],
@@ -160,6 +176,7 @@
     {
      "id": "openai--vulnerability-disclosure-policy",
      "name": "Vulnerability Disclosure Policy",
+     "service": "ChatGPT",
      "tracked_since": "2025-07-31T12:06:20Z",
      "last_change": "2026-07-28T19:01:31Z",
      "last_substantive_change": "2026-05-18T07:01:13Z",
@@ -172,13 +189,636 @@
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/ChatGPT/Vulnerability%20Disclosure%20Policy.md"
     }
    ]
+  },
+  {
+   "id": "anthropic",
+   "name": "Anthropic",
+   "color": "#b07c62",
+   "monogram": "AN",
+   "services": [
+    "Claude.ai"
+   ],
+   "sources": [
+    "https://github.com/OpenTermsArchive/GenAI-versions"
+   ],
+   "declarations": null,
+   "documents": [
+    {
+     "id": "anthropic--acceptable-use-policy",
+     "name": "Acceptable Use Policy",
+     "service": "Claude.ai",
+     "tracked_since": "2025-08-01T00:32:18Z",
+     "last_change": "2025-08-14T12:33:13Z",
+     "last_substantive_change": "2025-08-16T00:32:17Z",
+     "versions": 3,
+     "substantive_changes": 1,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Acceptable%20Use%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Acceptable%20Use%20Policy.md"
+    },
+    {
+     "id": "anthropic--commercial-terms",
+     "name": "Commercial Terms",
+     "service": "Claude.ai",
+     "tracked_since": "2025-08-01T00:32:07Z",
+     "last_change": "2026-10-28T07:02:20Z",
+     "last_substantive_change": "2026-10-20T19:03:39Z",
+     "versions": 5,
+     "substantive_changes": 2,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Commercial%20Terms.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Commercial%20Terms.md"
+    },
+    {
+     "id": "anthropic--data-processor-agreement",
+     "name": "Data Processor Agreement",
+     "service": "Claude.ai",
+     "tracked_since": "2025-08-01T00:32:10Z",
+     "last_change": "2026-10-28T19:02:17Z",
+     "last_substantive_change": "2026-10-20T19:03:44Z",
+     "versions": 18,
+     "substantive_changes": 13,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Data%20Processor%20Agreement.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Data%20Processor%20Agreement.md"
+    },
+    {
+     "id": "anthropic--law-enforcement-guidelines",
+     "name": "Law Enforcement Guidelines",
+     "service": "Claude.ai",
+     "tracked_since": "2025-08-01T00:32:09Z",
+     "last_change": "2025-12-10T21:24:58+05:30",
+     "last_substantive_change": "2025-09-17T00:32:06Z",
+     "versions": 3,
+     "substantive_changes": 1,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Law%20Enforcement%20Guidelines.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Law%20Enforcement%20Guidelines.md"
+    },
+    {
+     "id": "anthropic--privacy-policy",
+     "name": "Privacy Policy",
+     "service": "Claude.ai",
+     "tracked_since": "2025-08-01T00:32:06Z",
+     "last_change": "2026-10-28T07:02:17Z",
+     "last_substantive_change": "2026-10-20T19:03:35Z",
+     "versions": 15,
+     "substantive_changes": 12,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Privacy%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Privacy%20Policy.md"
+    },
+    {
+     "id": "anthropic--terms-of-service",
+     "name": "Terms of Service",
+     "service": "Claude.ai",
+     "tracked_since": "2025-08-01T00:32:05Z",
+     "last_change": "2026-11-04T07:02:10Z",
+     "last_substantive_change": "2026-10-20T19:03:34Z",
+     "versions": 15,
+     "substantive_changes": 5,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Terms%20of%20Service.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Terms%20of%20Service.md"
+    },
+    {
+     "id": "anthropic--trackers-policy",
+     "name": "Trackers Policy",
+     "service": "Claude.ai",
+     "tracked_since": "2025-08-01T00:32:08Z",
+     "last_change": "2026-10-28T07:02:20Z",
+     "last_substantive_change": "2026-10-20T19:03:40Z",
+     "versions": 4,
+     "substantive_changes": 2,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Trackers%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Trackers%20Policy.md"
+    },
+    {
+     "id": "anthropic--vulnerability-disclosure-policy",
+     "name": "Vulnerability Disclosure Policy",
+     "service": "Claude.ai",
+     "tracked_since": "2025-08-01T00:32:09Z",
+     "last_change": "2026-10-20T19:03:44Z",
+     "last_substantive_change": null,
+     "versions": 3,
+     "substantive_changes": 0,
+     "declared_dates": [
+      "Feb 14, 2025"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Vulnerability%20Disclosure%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Vulnerability%20Disclosure%20Policy.md"
+    }
+   ]
+  },
+  {
+   "id": "google",
+   "name": "Google",
+   "color": "#6387b7",
+   "monogram": "GO",
+   "services": [
+    "Google Generative AI Services"
+   ],
+   "sources": [
+    "https://github.com/OpenTermsArchive/GenAI-versions"
+   ],
+   "declarations": null,
+   "documents": [
+    {
+     "id": "google--acceptable-use-policy",
+     "name": "Acceptable Use Policy",
+     "service": "Google Generative AI Services",
+     "tracked_since": "2024-05-21T18:30:48Z",
+     "last_change": "2025-12-10T21:25:24+05:30",
+     "last_substantive_change": "2024-12-18T00:31:23Z",
+     "versions": 3,
+     "substantive_changes": 1,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Google%20Generative%20AI%20Services/Acceptable%20Use%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Google%20Generative%20AI%20Services/Acceptable%20Use%20Policy.md"
+    },
+    {
+     "id": "google--terms-of-service",
+     "name": "Terms of Service",
+     "service": "Google Generative AI Services",
+     "tracked_since": "2024-05-21T18:30:50Z",
+     "last_change": "2026-07-30T19:04:13Z",
+     "last_substantive_change": "2026-07-30T19:04:13Z",
+     "versions": 7,
+     "substantive_changes": 5,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Google%20Generative%20AI%20Services/Terms%20of%20Service.md",
+     "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Google%20Generative%20AI%20Services/Terms%20of%20Service.md"
+    }
+   ]
+  },
+  {
+   "id": "meta",
+   "name": "Meta",
+   "color": "#9b72a6",
+   "monogram": "ME",
+   "services": [
+    "Facebook",
+    "Instagram",
+    "WhatsApp",
+    "Threads"
+   ],
+   "sources": [
+    "https://github.com/OpenTermsArchive/pga-versions"
+   ],
+   "declarations": null,
+   "documents": [
+    {
+     "id": "meta--facebook--advertising-content-policy",
+     "name": "Facebook Advertising Content Policy",
+     "service": "Facebook",
+     "tracked_since": "2026-01-20T00:31:42Z",
+     "last_change": "2026-10-27T00:39:29Z",
+     "last_substantive_change": "2026-10-27T00:39:29Z",
+     "versions": 5,
+     "substantive_changes": 4,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Advertising%20Content%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Advertising%20Content%20Policy.md"
+    },
+    {
+     "id": "meta--facebook--commercial-terms",
+     "name": "Facebook Commercial Terms",
+     "service": "Facebook",
+     "tracked_since": "2022-07-11T14:58:21Z",
+     "last_change": "2026-10-30T00:31:56Z",
+     "last_substantive_change": "2026-10-30T00:31:56Z",
+     "versions": 13,
+     "substantive_changes": 10,
+     "declared_dates": [
+      "March 6, 2024"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Commercial%20Terms.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Commercial%20Terms.md"
+    },
+    {
+     "id": "meta--facebook--community-guidelines",
+     "name": "Facebook Community Guidelines",
+     "service": "Facebook",
+     "tracked_since": "2022-10-28T18:30:09Z",
+     "last_change": "2026-10-30T00:32:44Z",
+     "last_substantive_change": "2026-10-30T00:32:44Z",
+     "versions": 205,
+     "substantive_changes": 88,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Community%20Guidelines.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Community%20Guidelines.md"
+    },
+    {
+     "id": "meta--facebook--data-processor-agreement",
+     "name": "Facebook Data Processor Agreement",
+     "service": "Facebook",
+     "tracked_since": "2022-07-11T14:57:54Z",
+     "last_change": "2024-03-08T00:31:17Z",
+     "last_substantive_change": "2024-03-08T00:31:17Z",
+     "versions": 186,
+     "substantive_changes": 14,
+     "declared_dates": [
+      "April 25, 2023"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Data%20Processor%20Agreement.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Data%20Processor%20Agreement.md"
+    },
+    {
+     "id": "meta--facebook--developer-terms",
+     "name": "Facebook Developer Terms",
+     "service": "Facebook",
+     "tracked_since": "2022-07-11T14:58:07Z",
+     "last_change": "2026-02-04T00:30:58Z",
+     "last_substantive_change": "2026-02-04T00:30:58Z",
+     "versions": 18,
+     "substantive_changes": 11,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Developer%20Terms.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Developer%20Terms.md"
+    },
+    {
+     "id": "meta--facebook--law-enforcement-guidelines",
+     "name": "Facebook Law Enforcement Guidelines",
+     "service": "Facebook",
+     "tracked_since": "2022-07-11T14:58:22Z",
+     "last_change": "2025-10-23T08:48:39Z",
+     "last_substantive_change": "2025-09-02T12:33:01Z",
+     "versions": 108,
+     "substantive_changes": 4,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Law%20Enforcement%20Guidelines.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Law%20Enforcement%20Guidelines.md"
+    },
+    {
+     "id": "meta--facebook--live-policy",
+     "name": "Facebook Live Policy",
+     "service": "Facebook",
+     "tracked_since": "2022-07-11T14:57:59Z",
+     "last_change": "2026-09-09T00:32:15Z",
+     "last_substantive_change": "2026-09-09T00:32:15Z",
+     "versions": 176,
+     "substantive_changes": 7,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Live%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Live%20Policy.md"
+    },
+    {
+     "id": "meta--facebook--privacy-policy",
+     "name": "Facebook Privacy Policy",
+     "service": "Facebook",
+     "tracked_since": "2022-07-11T14:58:05Z",
+     "last_change": "2026-09-02T00:34:11Z",
+     "last_substantive_change": "2026-08-22T00:30:50Z",
+     "versions": 493,
+     "substantive_changes": 35,
+     "declared_dates": [
+      "July 23, 2026"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Privacy%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Privacy%20Policy.md"
+    },
+    {
+     "id": "meta--facebook--terms-of-service",
+     "name": "Facebook Terms of Service",
+     "service": "Facebook",
+     "tracked_since": "2022-07-11T14:58:04Z",
+     "last_change": "2026-06-16T12:30:26Z",
+     "last_substantive_change": "2026-06-16T12:30:26Z",
+     "versions": 110,
+     "substantive_changes": 19,
+     "declared_dates": [
+      "January 1, 2025"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Terms%20of%20Service.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Terms%20of%20Service.md"
+    },
+    {
+     "id": "meta--facebook--trackers-policy",
+     "name": "Facebook Trackers Policy",
+     "service": "Facebook",
+     "tracked_since": "2022-07-11T14:58:08Z",
+     "last_change": "2025-11-14T00:31:50Z",
+     "last_substantive_change": "2024-06-12T12:30:45Z",
+     "versions": 25,
+     "substantive_changes": 10,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/Trackers%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/Trackers%20Policy.md"
+    },
+    {
+     "id": "meta--facebook--user-consent-policy",
+     "name": "Facebook User Consent Policy",
+     "service": "Facebook",
+     "tracked_since": "2024-05-01T18:30:16Z",
+     "last_change": "2025-10-03T00:31:12Z",
+     "last_substantive_change": "2025-08-26T00:31:10Z",
+     "versions": 4,
+     "substantive_changes": 2,
+     "declared_dates": [
+      "August 23, 2025",
+      "25 April 2023"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Facebook/User%20Consent%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Facebook/User%20Consent%20Policy.md"
+    },
+    {
+     "id": "meta--instagram--advertising-content-policy",
+     "name": "Instagram Advertising Content Policy",
+     "service": "Instagram",
+     "tracked_since": "2026-02-06T12:40:00Z",
+     "last_change": "2026-09-10T00:47:56Z",
+     "last_substantive_change": "2026-09-10T00:47:56Z",
+     "versions": 3,
+     "substantive_changes": 2,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Advertising%20Content%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Advertising%20Content%20Policy.md"
+    },
+    {
+     "id": "meta--instagram--community-guidelines",
+     "name": "Instagram Community Guidelines",
+     "service": "Instagram",
+     "tracked_since": "2022-07-11T14:59:05Z",
+     "last_change": "2026-10-30T00:40:25Z",
+     "last_substantive_change": "2026-10-30T00:40:25Z",
+     "versions": 379,
+     "substantive_changes": 84,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Community%20Guidelines.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Community%20Guidelines.md"
+    },
+    {
+     "id": "meta--instagram--content-monetisation-policy",
+     "name": "Instagram Content Monetisation Policy",
+     "service": "Instagram",
+     "tracked_since": "2025-10-23T12:34:26Z",
+     "last_change": "2026-09-03T00:52:00Z",
+     "last_substantive_change": "2026-08-29T12:48:18Z",
+     "versions": 106,
+     "substantive_changes": 5,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Content%20Monetisation%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Content%20Monetisation%20Policy.md"
+    },
+    {
+     "id": "meta--instagram--developer-terms",
+     "name": "Instagram Developer Terms",
+     "service": "Instagram",
+     "tracked_since": "2022-07-11T14:59:21Z",
+     "last_change": "2026-02-04T00:39:59Z",
+     "last_substantive_change": "2026-02-04T00:39:59Z",
+     "versions": 89,
+     "substantive_changes": 12,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Developer%20Terms.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Developer%20Terms.md"
+    },
+    {
+     "id": "meta--instagram--law-enforcement-guidelines",
+     "name": "Instagram Law Enforcement Guidelines",
+     "service": "Instagram",
+     "tracked_since": "2022-07-11T14:59:20Z",
+     "last_change": "2026-10-18T12:46:54Z",
+     "last_substantive_change": "2026-10-18T12:46:54Z",
+     "versions": 286,
+     "substantive_changes": 11,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Law%20Enforcement%20Guidelines.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Law%20Enforcement%20Guidelines.md"
+    },
+    {
+     "id": "meta--instagram--privacy-policy",
+     "name": "Instagram Privacy Policy",
+     "service": "Instagram",
+     "tracked_since": "2022-09-22T07:07:34Z",
+     "last_change": "2026-10-01T00:44:11Z",
+     "last_substantive_change": "2026-10-01T00:44:11Z",
+     "versions": 86,
+     "substantive_changes": 30,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Privacy%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Privacy%20Policy.md"
+    },
+    {
+     "id": "meta--instagram--terms-of-service",
+     "name": "Instagram Terms of Service",
+     "service": "Instagram",
+     "tracked_since": "2022-07-11T14:58:37Z",
+     "last_change": "2026-08-29T00:39:54Z",
+     "last_substantive_change": "2026-08-29T00:39:54Z",
+     "versions": 417,
+     "substantive_changes": 24,
+     "declared_dates": [
+      "1 January 2025"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Terms%20of%20Service.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Terms%20of%20Service.md"
+    },
+    {
+     "id": "meta--instagram--trackers-policy",
+     "name": "Instagram Trackers Policy",
+     "service": "Instagram",
+     "tracked_since": "2024-08-16T00:31:40Z",
+     "last_change": "2025-10-03T00:33:45Z",
+     "last_substantive_change": "2025-07-18T00:33:04Z",
+     "versions": 3,
+     "substantive_changes": 1,
+     "declared_dates": [
+      "December 12, 2023"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Trackers%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Trackers%20Policy.md"
+    },
+    {
+     "id": "meta--whatsapp--privacy-policy",
+     "name": "WhatsApp Privacy Policy",
+     "service": "WhatsApp",
+     "tracked_since": "2022-07-11T15:01:21Z",
+     "last_change": "2026-07-03T01:12:33Z",
+     "last_substantive_change": "2026-07-03T01:12:33Z",
+     "versions": 10,
+     "substantive_changes": 7,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/WhatsApp/Privacy%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/WhatsApp/Privacy%20Policy.md"
+    },
+    {
+     "id": "meta--whatsapp--terms-of-service",
+     "name": "WhatsApp Terms of Service",
+     "service": "WhatsApp",
+     "tracked_since": "2022-07-11T15:01:20Z",
+     "last_change": "2026-07-03T01:12:33Z",
+     "last_substantive_change": "2026-07-03T01:12:33Z",
+     "versions": 8,
+     "substantive_changes": 3,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/WhatsApp/Terms%20of%20Service.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/WhatsApp/Terms%20of%20Service.md"
+    },
+    {
+     "id": "meta--whatsapp--trackers-policy",
+     "name": "WhatsApp Trackers Policy",
+     "service": "WhatsApp",
+     "tracked_since": "2022-07-11T15:01:22Z",
+     "last_change": "2026-02-26T01:05:31Z",
+     "last_substantive_change": "2026-02-26T01:05:31Z",
+     "versions": 6,
+     "substantive_changes": 4,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/WhatsApp/Trackers%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/WhatsApp/Trackers%20Policy.md"
+    },
+    {
+     "id": "meta--threads--privacy-policy",
+     "name": "Threads Privacy Policy",
+     "service": "Threads",
+     "tracked_since": "2024-03-14T18:33:40Z",
+     "last_change": "2026-10-18T01:05:48Z",
+     "last_substantive_change": "2026-10-18T01:05:48Z",
+     "versions": 61,
+     "substantive_changes": 21,
+     "declared_dates": [
+      "January 21, 2026"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Threads/Privacy%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Threads/Privacy%20Policy.md"
+    },
+    {
+     "id": "meta--threads--terms-of-service",
+     "name": "Threads Terms of Service",
+     "service": "Threads",
+     "tracked_since": "2024-03-14T18:33:36Z",
+     "last_change": "2026-06-29T00:58:55Z",
+     "last_substantive_change": "2026-06-25T13:02:04Z",
+     "versions": 176,
+     "substantive_changes": 21,
+     "declared_dates": [
+      "21 January 2026"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Threads/Terms%20of%20Service.md",
+     "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Threads/Terms%20of%20Service.md"
+    }
+   ]
+  },
+  {
+   "id": "apple",
+   "name": "Apple",
+   "color": "#7d8a9a",
+   "monogram": "AP",
+   "services": [
+    "Apple",
+    "App Store",
+    "iCloud"
+   ],
+   "sources": [
+    "https://github.com/OpenTermsArchive/contrib-versions"
+   ],
+   "declarations": null,
+   "documents": [
+    {
+     "id": "apple--apple--human-rights-policy",
+     "name": "Apple Human Rights Policy",
+     "service": "Apple",
+     "tracked_since": "2020-09-04T21:30:37Z",
+     "last_change": "2025-05-10T06:02:04Z",
+     "last_substantive_change": "2025-05-10T06:02:04Z",
+     "versions": 6,
+     "substantive_changes": 6,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/Apple/Human%20Rights%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/contrib-versions/blob/main/Apple/Human%20Rights%20Policy.md"
+    },
+    {
+     "id": "apple--apple--privacy-policy",
+     "name": "Apple Privacy Policy",
+     "service": "Apple",
+     "tracked_since": "2020-07-29T14:30:00Z",
+     "last_change": "2025-09-23T06:02:31Z",
+     "last_substantive_change": "2025-08-01T06:02:06Z",
+     "versions": 18,
+     "substantive_changes": 14,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/Apple/Privacy%20Policy.md",
+     "current_url": "https://github.com/OpenTermsArchive/contrib-versions/blob/main/Apple/Privacy%20Policy.md"
+    },
+    {
+     "id": "apple--app-store--developer-terms",
+     "name": "App Store Developer Terms",
+     "service": "App Store",
+     "tracked_since": "2020-09-03T12:30:01Z",
+     "last_change": "2025-03-18T06:01:44Z",
+     "last_substantive_change": "2025-03-18T06:01:44Z",
+     "versions": 7,
+     "substantive_changes": 7,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/App%20Store/Developer%20Terms.md",
+     "current_url": "https://github.com/OpenTermsArchive/contrib-versions/blob/main/App%20Store/Developer%20Terms.md"
+    },
+    {
+     "id": "apple--app-store--review-guidelines",
+     "name": "App Store Review Guidelines",
+     "service": "App Store",
+     "tracked_since": "2020-07-29T14:30:08Z",
+     "last_change": "2026-10-17T00:33:54Z",
+     "last_substantive_change": "2026-10-17T00:33:54Z",
+     "versions": 55,
+     "substantive_changes": 36,
+     "declared_dates": [],
+     "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/App%20Store/Review%20Guidelines.md",
+     "current_url": "https://github.com/OpenTermsArchive/contrib-versions/blob/main/App%20Store/Review%20Guidelines.md"
+    },
+    {
+     "id": "apple--icloud--terms-of-service",
+     "name": "iCloud Terms of Service",
+     "service": "iCloud",
+     "tracked_since": "2013-06-20T08:50:34Z",
+     "last_change": "2026-09-15T00:42:43Z",
+     "last_substantive_change": "2026-09-15T00:42:43Z",
+     "versions": 33,
+     "substantive_changes": 28,
+     "declared_dates": [
+      "September 14, 2026"
+     ],
+     "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/iCloud/Terms%20of%20Service.md",
+     "current_url": "https://github.com/OpenTermsArchive/contrib-versions/blob/main/iCloud/Terms%20of%20Service.md"
+    }
+   ]
   }
  ],
  "status": [
   {
    "platform": "openai",
-   "source": "https://github.com/OpenTermsArchive/GenAI-versions",
+   "name": "OpenAI",
    "last_source_commit": "2026-11-04T07:03:28Z",
+   "age_days": 0,
+   "stale": false
+  },
+  {
+   "platform": "anthropic",
+   "name": "Anthropic",
+   "last_source_commit": "2026-11-04T07:03:28Z",
+   "age_days": 0,
+   "stale": false
+  },
+  {
+   "platform": "google",
+   "name": "Google",
+   "last_source_commit": "2026-11-04T07:03:28Z",
+   "age_days": 0,
+   "stale": false
+  },
+  {
+   "platform": "meta",
+   "name": "Meta",
+   "last_source_commit": "2026-11-04T13:19:47Z",
+   "age_days": 0,
+   "stale": false
+  },
+  {
+   "platform": "apple",
+   "name": "Apple",
+   "last_source_commit": "2026-11-04T13:10:47Z",
    "age_days": 0,
    "stale": false
   }
