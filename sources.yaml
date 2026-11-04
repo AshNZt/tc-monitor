@@ -2,38 +2,55 @@
 # Data comes from Open Terms Archive (https://opentermsarchive.org), which
 # downloads and archives these documents several times a day.
 #
-# To add a platform: add a block under `platforms` that points to an Open
-# Terms Archive "versions" repository and the service folder inside it.
-# `documents` can list specific files, or be omitted to track every document
-# of that service.
+# Each platform lists one or more "services". A service is a folder in an
+# Open Terms Archive "versions" repository. By default every document of the
+# service is tracked; add `documents: [...]` to a service to limit it.
+#
+# Example of a service with its own repository and a document filter:
+#   services:
+#     - name: Facebook
+#       repo: https://github.com/OpenTermsArchive/pga-versions
+#       documents: [Terms of Service, Privacy Policy]
 
 platforms:
   - id: openai
     name: OpenAI
-    service: ChatGPT
+    monogram: OA
+    color: "#4e8f80"
     repo: https://github.com/OpenTermsArchive/GenAI-versions
-    declarations: https://github.com/OpenTermsArchive/GenAI-declarations/blob/main/declarations/ChatGPT.json
-    # documents:            # optional, default = all documents of the service
-    #   - Terms of Service
-    #   - Privacy Policy
+    services: [ChatGPT]
 
-  # Next platforms (uncomment when ready):
-  # - id: anthropic
-  #   name: Anthropic
-  #   service: Claude.ai
-  #   repo: https://github.com/OpenTermsArchive/GenAI-versions
-  # - id: google
-  #   name: Google (Gemini)
-  #   service: Google Generative AI Services
-  #   repo: https://github.com/OpenTermsArchive/GenAI-versions
-  # - id: meta
-  #   name: Meta (Facebook)
-  #   service: Facebook
-  #   repo: https://github.com/OpenTermsArchive/pga-versions
+  - id: anthropic
+    name: Anthropic
+    monogram: AN
+    color: "#b07c62"
+    repo: https://github.com/OpenTermsArchive/GenAI-versions
+    services: [Claude.ai]
+
+  - id: google
+    name: Google
+    monogram: GO
+    color: "#6387b7"
+    repo: https://github.com/OpenTermsArchive/GenAI-versions
+    services: [Google Generative AI Services]
+
+  - id: meta
+    name: Meta
+    monogram: ME
+    color: "#9b72a6"
+    repo: https://github.com/OpenTermsArchive/pga-versions
+    services: [Facebook, Instagram, WhatsApp, Threads]
+
+  - id: apple
+    name: Apple
+    monogram: AP
+    color: "#7d8a9a"
+    repo: https://github.com/OpenTermsArchive/contrib-versions
+    services: [Apple, App Store, iCloud]
 
 settings:
   # Shown in the footer of the site
   author: Alessandro Morigi
   author_url: https://github.com/AshNZt
-  # Warn on the dashboard if the source has not recorded anything for this many days
+  # Warn on the dashboard if a source has not recorded anything for this many days
   stale_after_days: 21

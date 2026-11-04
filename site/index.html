@@ -1,40 +1,43 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T&amp;C Monitor</title>
-<meta name="description" content="Tracking changes to the terms and policies of major digital platforms.">
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b2556'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h8' stroke='%2394ceed' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1b2556">
+  <title>T&amp;C Monitor</title>
+  <meta name="description" content="Tracking changes to the terms and policies of major technology platforms.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b2556'/%3E%3Cpath d='M9 11h14M9 16h10M9 21h6' stroke='%2394ceed' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top">
-  <div class="wrap top-inner">
-    <a class="brand" href="#/">
-      <span class="logo" aria-hidden="true"></span>
-      <span>T&amp;C Monitor</span>
-    </a>
-    <nav>
-      <a href="#/" data-nav="home">Overview</a>
-      <a href="#/changes" data-nav="changes">Changes</a>
-      <a href="#/about" data-nav="about">About</a>
-    </nav>
-  </div>
-</header>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#/" aria-label="T and C Monitor home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>T&amp;C Monitor</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#/" data-nav="home">Overview</a>
+        <a href="#/changes" data-nav="changes">Changes</a>
+        <a href="#/about" data-nav="about">About</a>
+      </nav>
+    </div>
+  </header>
 
-<main id="app" class="wrap" aria-live="polite">
-  <p class="muted">Loading…</p>
-</main>
+  <main id="app" aria-live="polite">
+    <section class="shell page-head"><p class="muted">Loading…</p></section>
+  </main>
 
-<footer class="wrap foot">
-  <p>Built by <a href="https://github.com/alessandromorigi" id="author-link">Alessandro Morigi</a>.
-  Document versions from <a href="https://opentermsarchive.org">Open Terms Archive</a>.
-  <span id="generated"></span></p>
-</footer>
+  <footer id="footer">
+    <div class="shell footer-inner">
+      <p>Built by <a id="author-link" href="https://github.com/AshNZt">Alessandro Morigi</a> <span>·</span> Data from <a href="https://opentermsarchive.org">Open Terms Archive</a></p>
+      <p>For research and monitoring purposes <span>·</span> Brussels, Belgium</p>
+    </div>
+  </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
-<script src="app.js"></script>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

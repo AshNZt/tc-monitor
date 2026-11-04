@@ -29,18 +29,13 @@ No server, no database, no cost.
 4. Go to **Actions › Update T&C data › Run workflow**. After about a minute the site is live at `https://<username>.github.io/tc-monitor/`.
 5. To receive emails: click **Watch › Custom › Issues** on the repository page. Colleagues can do the same.
 
-## Adding a platform
+## Platforms and adding new ones
 
-Uncomment or add a block in `sources.yaml`. The service name must match a folder in the Open Terms Archive versions repository:
+Tracked today: OpenAI (ChatGPT), Anthropic (Claude.ai), Google (Generative AI Services), Meta (Facebook, Instagram, WhatsApp, Threads), Apple (Apple, App Store, iCloud).
 
-| Platform | Repository | Service folder |
-|---|---|---|
-| Anthropic | `GenAI-versions` | `Claude.ai` |
-| Google Gemini | `GenAI-versions` | `Google Generative AI Services` |
-| Meta / Facebook | `pga-versions` | `Facebook` (also `Instagram`, `WhatsApp`) |
-| Apple | not tracked by Open Terms Archive yet | |
+Each platform in `sources.yaml` lists one or more services. A service is a folder in an Open Terms Archive versions repository (`GenAI-versions`, `pga-versions`, `contrib-versions`). To see what is available, browse the matching `declarations` repositories at <https://github.com/OpenTermsArchive>. A missing document can be proposed to Open Terms Archive.
 
-To check what Open Terms Archive tracks for a service, see the `declarations` repositories at <https://github.com/OpenTermsArchive>. A missing document or platform (such as Apple) can be proposed to them, or tracked with your own Open Terms Archive collection.
+Change types: only *text changes* are counted. Edits to links or formatting only, wording that is reverted or short-lived, date-only edits and technical updates are kept but hidden by default ("Include minor changes").
 
 ## Running locally
 

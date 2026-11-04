@@ -129,6 +129,23 @@ def normalize(text):
     return text
 
 
+def content_key(text):
+    """Wording only: ignores link addresses, Markdown formatting and spacing."""
+    t = normalize(text)
+    t = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", t)
+    t = re.sub(r"https?://\S+", "", t)
+    t = re.sub(r"[\\*_`#>|=\u2060-]", "", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+REVERT_WINDOW_DAYS = 60   # back to wording seen within this many days -> "reverted"
+TEMPORARY_DAYS = 30       # wording that disappears again within this many days -> "temporary"
+
+
+def days_between(a, b):
+    return abs((dt.datetime.fromisoformat(b) - dt.datetime.fromisoformat(a)).days)
+
+
 def diff_hunks(old, new):
     a, b = normalize(old).splitlines(), normalize(new).splitlines()
     sec_b, sec_a = headings(b), headings(a)
@@ -175,73 +192,119 @@ def build():
 
     platforms, all_changes, status = [], [], []
 
+    repos = {}
+
+    def repo_for(url):
+        if url not in repos:
+            path = sync_repo(url)
+            last = run("git", "log", "-1", "--format=%cI", cwd=path).strip()
+            repos[url] = (path, last)
+        return repos[url]
+
     for p in cfg["platforms"]:
-        repo = sync_repo(p["repo"])
-        web = p["repo"].rstrip("/")
-        service = p["service"]
-        files = [f for f in run("git", "ls-tree", "--name-only", "HEAD", f"{service}/", cwd=repo).splitlines()
-                 if f.endswith(".md")]
-        wanted = p.get("documents")
-        if wanted:
-            files = [f for f in files if Path(f).stem in wanted]
+        # A platform has one or more services; each service is a folder in an
+        # Open Terms Archive versions repository.
+        services = []
+        for s in p["services"]:
+            s = {"name": s} if isinstance(s, str) else dict(s)
+            s.setdefault("repo", p.get("repo"))
+            services.append(s)
+        multi = len(services) > 1
 
-        last_source = run("git", "log", "-1", "--format=%cI", cwd=repo).strip()
-        age = (now - dt.datetime.fromisoformat(last_source)).days
-        status.append({"platform": p["id"], "source": web, "last_source_commit": last_source,
-                       "age_days": age, "stale": age > stale_days})
+        docs, newest_source = [], None
+        for svc in services:
+            repo, last_source = repo_for(svc["repo"])
+            newest_source = max(newest_source or last_source, last_source)
+            web = svc["repo"].rstrip("/")
+            service = svc["name"]
+            files = [f for f in run("git", "ls-tree", "--name-only", "HEAD", f"{service}/", cwd=repo).splitlines()
+                     if f.endswith(".md")]
+            if not files:
+                print(f"WARNING: no documents found for {p['name']} / {service}", file=sys.stderr)
+            wanted = svc.get("documents")
+            if wanted:
+                files = [f for f in files if Path(f).stem in wanted]
 
-        blobs = Blobs(repo)
-        docs = []
-        for path in sorted(files):
-            name = Path(path).stem
-            doc_id = f"{p['id']}--{slug(name)}"
-            log = run("git", "log", "--reverse", "--format=%H%x1f%cI%x1f%s", "--", path, cwd=repo)
-            commits = [l.split("\x1f") for l in log.splitlines() if l]
-            prev, changes = None, []
-            for sha, date, subject in commits:
-                text = blobs.get(sha, path)
-                if text is None:
-                    continue
-                if prev is None:
-                    hunks, add, rem = [], text.count("\n") + 1, 0
-                else:
-                    hunks, add, rem = diff_hunks(prev, text)
-                    if not hunks:
-                        prev = text
+            blobs = Blobs(repo)
+            for path in sorted(files):
+                name = Path(path).stem
+                label = f"{service} {name}" if multi else name
+                doc_id = f"{p['id']}--{slug(service)}--{slug(name)}" if multi else f"{p['id']}--{slug(name)}"
+                log = run("git", "log", "--reverse", "--format=%H%x1f%cI%x1f%s", "--", path, cwd=repo)
+                commits = [l.split("\x1f") for l in log.splitlines() if l]
+                prev, changes, keys, pending = None, [], [], []
+                for sha, date, subject in commits:
+                    text = blobs.get(sha, path)
+                    if text is None:
                         continue
-                kind = classify(subject, hunks)
-                cid = f"{date[:10]}--{doc_id}--{sha[:7]}"
-                sections = sorted({h["section"] for h in hunks if h["section"]})
-                entry = {
-                    "id": cid, "date": date, "platform": p["id"], "platform_name": p["name"],
-                    "doc_id": doc_id, "document": name, "type": kind,
-                    "added": add, "removed": rem, "sections": sections,
-                    "declared_dates": declared_dates(text),
-                    "source_commit": f"{web}/commit/{sha}",
-                }
-                changes.append(entry)
-                (OUT / "changes" / f"{cid}.json").write_text(
-                    json.dumps({**entry, "hunks": hunks}, ensure_ascii=False), encoding="utf-8")
-                prev = text
-            if prev is None:
-                continue
-            (OUT / "current" / f"{doc_id}.md").write_text(prev, encoding="utf-8")
-            subst = [c for c in changes if c["type"] == "substantive"]
-            docs.append({
-                "id": doc_id, "name": name,
-                "tracked_since": changes[0]["date"] if changes else None,
-                "last_change": changes[-1]["date"] if changes else None,
-                "last_substantive_change": subst[-1]["date"] if subst else None,
-                "versions": len(changes),
-                "substantive_changes": len(subst),
-                "declared_dates": declared_dates(prev),
-                "history_url": f"{web}/commits/main/{path.replace(' ', '%20')}",
-                "current_url": f"{web}/blob/main/{path.replace(' ', '%20')}",
-            })
-            all_changes += changes
-        blobs.close()
-        platforms.append({"id": p["id"], "name": p["name"], "service": service,
-                          "source": web, "declarations": p.get("declarations"), "documents": docs})
+                    if prev is None:
+                        hunks, add, rem = [], text.count("\n") + 1, 0
+                    else:
+                        hunks, add, rem = diff_hunks(prev, text)
+                        if not hunks:
+                            prev = text
+                            continue
+                    kind = classify(subject, hunks)
+                    key = content_key(text)
+                    if kind == "substantive" and prev is not None:
+                        if key == content_key(prev):
+                            kind = "formatting"
+                        else:
+                            for j in range(len(keys) - 2, -1, -1):
+                                k_date, k_key, k_idx = keys[j]
+                                if days_between(k_date, date) > REVERT_WINDOW_DAYS:
+                                    break
+                                if k_key == key:
+                                    kind = "reverted"
+                                    # changes since then were short-lived
+                                    for c in changes[k_idx + 1:]:
+                                        if c["type"] == "substantive" and days_between(c["date"], date) <= TEMPORARY_DAYS:
+                                            c["type"] = "temporary"
+                                    break
+                    cid = f"{date[:10]}--{doc_id}--{sha[:7]}"
+                    sections = sorted({h["section"] for h in hunks if h["section"]})
+                    entry = {
+                        "id": cid, "date": date, "platform": p["id"], "platform_name": p["name"],
+                        "service": service, "doc_id": doc_id, "document": label, "type": kind,
+                        "added": add, "removed": rem, "sections": sections,
+                        "declared_dates": declared_dates(text),
+                        "source_commit": f"{web}/commit/{sha}",
+                    }
+                    changes.append(entry)
+                    pending.append(hunks)
+                    keys.append((date, key, len(changes) - 1))
+                    prev = text
+                for entry, hunks in zip(changes, pending):
+                    (OUT / "changes" / f"{entry['id']}.json").write_text(
+                        json.dumps({**entry, "hunks": hunks}, ensure_ascii=False), encoding="utf-8")
+                if prev is None:
+                    continue
+                (OUT / "current" / f"{doc_id}.md").write_text(prev, encoding="utf-8")
+                subst = [c for c in changes if c["type"] == "substantive"]
+                docs.append({
+                    "id": doc_id, "name": label, "service": service,
+                    "tracked_since": changes[0]["date"] if changes else None,
+                    "last_change": changes[-1]["date"] if changes else None,
+                    "last_substantive_change": subst[-1]["date"] if subst else None,
+                    "versions": len(changes),
+                    "substantive_changes": len(subst),
+                    "declared_dates": declared_dates(prev),
+                    "history_url": f"{web}/commits/main/{path.replace(' ', '%20')}",
+                    "current_url": f"{web}/blob/main/{path.replace(' ', '%20')}",
+                })
+                all_changes += changes
+            blobs.close()
+
+        age = (now - dt.datetime.fromisoformat(newest_source)).days if newest_source else None
+        status.append({"platform": p["id"], "name": p["name"], "last_source_commit": newest_source,
+                       "age_days": age, "stale": age is None or age > stale_days})
+        platforms.append({
+            "id": p["id"], "name": p["name"], "color": p.get("color", "#6d7388"),
+            "monogram": p.get("monogram", p["name"][:2].upper()),
+            "services": [s["name"] for s in services],
+            "sources": sorted({s["repo"].rstrip("/") for s in services}),
+            "declarations": p.get("declarations"), "documents": docs,
+        })
 
     all_changes.sort(key=lambda c: c["date"], reverse=True)
     (OUT / "index.json").write_text(json.dumps({
