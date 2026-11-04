@@ -246,6 +246,12 @@ async function ask(q) {
   if (S.busy || !q.trim()) return;
   S.busy = true; $("send").disabled = true;
   bubble("user", esc(q));
+  const wanted = $("engine").value;
+  if (wanted !== "none" && S.engineId !== wanted) {
+    note("Loading the model before answering. The first time this downloads it (about 1 to 2 GB), then it is cached.");
+    try { await loadEngine(wanted); }
+    catch (e) { console.error(e); note(`The model could not be loaded on this computer (${e.message}). Showing search results only.`); S.engine = null; S.engineId = "none"; }
+  }
   const times = {};
   try {
     let t0 = performance.now();
@@ -253,7 +259,7 @@ async function ask(q) {
     times.search = performance.now() - t0;
     showSources(results, filters);
     if (!S.engine) {
-      bubble("bot", results.length ? `Here are the most relevant changes:\n` + results.map(({ c }, i) => `<a class="cite" href="../#/change/${encodeURIComponent(c.id)}" target="_blank">${i + 1}</a> ${esc(c.platform_name)} · ${esc(c.document)}, ${fmtDate(c.date)}`).join("\n") : "No matching changes found.");
+      bubble("bot", results.length ? `<b>Search only, no AI model active.</b> Most relevant changes:\n` + results.map(({ c }, i) => `<a class="cite" href="../#/change/${encodeURIComponent(c.id)}" target="_blank">${i + 1}</a> ${esc(c.platform_name)} · ${esc(c.document)}, ${fmtDate(c.date)}`).join("\n") : "No matching changes found.");
     } else {
       t0 = performance.now();
       const context = await contextFor(results);
@@ -291,6 +297,8 @@ async function ask(q) {
   const opts = ENGINES.filter((e) => e.kind === "none" || (e.kind === "nano" ? caps.nano !== "unavailable" : caps.webgpu));
   $("engine").innerHTML = opts.map((e) => `<option value="${e.id}">${esc(e.label)}</option>`).join("");
   $("engine").value = caps.nano === "available" ? "nano" : caps.webgpu ? "Qwen3.5-2B-q4f16_1-MLC" : "none";
+  if (!caps.webgpu && caps.nano === "unavailable")
+    note("This browser cannot run an AI model (no WebGPU and no Gemini Nano). The chat will only show the most relevant changes. Try the latest Chrome or Edge on a computer.");
   $("caps").textContent = `This browser: WebGPU ${caps.webgpu ? "available" : "not available"} · Gemini Nano ${caps.nano}.` +
     (!caps.webgpu && caps.nano === "unavailable" ? " Only search is possible here, try Chrome or Edge on a computer." : "");
   $("samples").innerHTML = SAMPLES.map((s) => `<button type="button">${esc(s)}</button>`).join("");
