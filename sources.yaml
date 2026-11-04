@@ -1,0 +1,39 @@
+# Documents to monitor.
+# Data comes from Open Terms Archive (https://opentermsarchive.org), which
+# downloads and archives these documents several times a day.
+#
+# To add a platform: add a block under `platforms` that points to an Open
+# Terms Archive "versions" repository and the service folder inside it.
+# `documents` can list specific files, or be omitted to track every document
+# of that service.
+
+platforms:
+  - id: openai
+    name: OpenAI
+    service: ChatGPT
+    repo: https://github.com/OpenTermsArchive/GenAI-versions
+    declarations: https://github.com/OpenTermsArchive/GenAI-declarations/blob/main/declarations/ChatGPT.json
+    # documents:            # optional, default = all documents of the service
+    #   - Terms of Service
+    #   - Privacy Policy
+
+  # Next platforms (uncomment when ready):
+  # - id: anthropic
+  #   name: Anthropic
+  #   service: Claude.ai
+  #   repo: https://github.com/OpenTermsArchive/GenAI-versions
+  # - id: google
+  #   name: Google (Gemini)
+  #   service: Google Generative AI Services
+  #   repo: https://github.com/OpenTermsArchive/GenAI-versions
+  # - id: meta
+  #   name: Meta (Facebook)
+  #   service: Facebook
+  #   repo: https://github.com/OpenTermsArchive/pga-versions
+
+settings:
+  # Shown in the footer of the site
+  author: Alessandro Morigi
+  author_url: https://github.com/AshNZt
+  # Warn on the dashboard if the source has not recorded anything for this many days
+  stale_after_days: 21

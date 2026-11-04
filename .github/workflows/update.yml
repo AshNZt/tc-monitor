@@ -1,0 +1,66 @@
+name: Update T&C data
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"   # every Monday at 06:17 UTC
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
+  push:
+    branches: [main]
+    paths: ["site/**", "scripts/**", "sources.yaml", ".github/workflows/**"]
+
+permissions:
+  contents: write
+  issues: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Keep previous data for comparison
+        run: cp site/data/changes.json /tmp/previous_changes.json 2>/dev/null || true
+
+      - name: Build data from Open Terms Archive
+        run: python scripts/build.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "tc-monitor-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data
+          git diff --cached --quiet || git commit -m "Data update $(date -u +%F)"
+          git push
+
+      - name: Open an issue for new changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SITE: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: |
+          python scripts/notify.py /tmp/previous_changes.json "$SITE" > /tmp/body.md
+          if [ -s /tmp/body.md ]; then
+            gh issue create --title "New T&C changes, $(date -u +%F)" --body-file /tmp/body.md
+          fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

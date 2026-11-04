@@ -1,0 +1,264 @@
+#!/usr/bin/env python3
+"""
+T&C Monitor, data builder.
+
+Reads the version history of each monitored document from Open Terms Archive
+(a public git repository of dated Markdown versions), works out every change,
+and writes the JSON files the dashboard reads into site/data/.
+
+Run:  python scripts/build.py
+Needs: git, Python 3.9+, PyYAML.
+"""
+import datetime as dt
+import difflib
+import json
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+CACHE = ROOT / ".cache"
+OUT = ROOT / "site" / "data"
+CONTEXT = 2  # unchanged lines shown around each change
+
+DATE_RE = re.compile(
+    r"^\s*(?:last\s+)?(?:updated|effective|revised)(?:\s+date)?\s*(?:on)?\s*:?\s*(.+?)\s*$",
+    re.I,
+)
+
+
+def run(*args, cwd=None):
+    return subprocess.run(args, cwd=cwd, check=True, capture_output=True, text=True, encoding="utf-8").stdout
+
+
+def slug(s):
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+
+
+def sync_repo(url):
+    """Clone (first time) or update a bare copy of an OTA versions repository."""
+    name = url.rstrip("/").split("/")[-1]
+    path = CACHE / f"{name}.git"
+    if path.exists():
+        run("git", "fetch", "-q", "--prune", "origin", "+refs/heads/*:refs/heads/*", cwd=path)
+    else:
+        CACHE.mkdir(exist_ok=True)
+        run("git", "clone", "-q", "--bare", url, str(path))
+    return path
+
+
+class Blobs:
+    """Fast reader for file contents at given commits (git cat-file --batch)."""
+
+    def __init__(self, repo):
+        self.p = subprocess.Popen(
+            ["git", "cat-file", "--batch"], cwd=repo,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        )
+
+    def get(self, commit, path):
+        self.p.stdin.write(f"{commit}:{path}\n".encode())
+        self.p.stdin.flush()
+        header = self.p.stdout.readline().decode().split()
+        if len(header) < 3 or header[1] == "missing":
+            return None
+        size = int(header[2])
+        data = self.p.stdout.read(size)
+        self.p.stdout.read(1)
+        return data.decode("utf-8", "replace")
+
+    def close(self):
+        self.p.stdin.close()
+        self.p.wait()
+
+
+def headings(lines):
+    """Map line index -> current section heading (ATX '#' and setext '===/---')."""
+    current, out = "", []
+    for i, line in enumerate(lines):
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        if line.startswith("#"):
+            current = line.lstrip("#").strip()
+        elif line.strip() and re.fullmatch(r"\s*(=+|-{3,})\s*", nxt) and not line.startswith(("*", "-")):
+            current = line.strip()
+        out.append(current)
+    return out
+
+
+def clean_heading(h):
+    h = re.sub(r"\\", "", h)
+    h = re.sub(r"[*_`]", "", h)
+    return h[:120]
+
+
+def declared_dates(text):
+    found = []
+    for line in text.splitlines()[:400]:
+        m = DATE_RE.match(line)
+        if m and len(m.group(1)) < 40 and re.search(r"\d{4}", m.group(1)):
+            found.append(m.group(1).strip("*_ "))
+    return found
+
+
+def classify(subject, hunks):
+    if subject.startswith("First record"):
+        return "first"
+    if subject.startswith("Apply technical"):
+        return "technical"
+    changed = [l for h in hunks for (t, l) in h["lines"] if t in "+-"]
+    if changed and all(DATE_RE.match(l) for l in changed):
+        return "date-only"
+    return "substantive"
+
+
+# Tokens that change on every page load without the text changing
+# (tracking IDs inside links, cache-busting parameters).
+NOISE = [
+    (re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.I), "<id>"),
+    (re.compile(r"([?&])(utm_[a-z]+|_gl|_ga|ref|v|ts)=[^&)\s]*", re.I), r"\1"),
+]
+
+
+def normalize(text):
+    for rx, rep in NOISE:
+        text = rx.sub(rep, text)
+    return text
+
+
+def diff_hunks(old, new):
+    a, b = normalize(old).splitlines(), normalize(new).splitlines()
+    sec_b, sec_a = headings(b), headings(a)
+    sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
+    hunks, added, removed = [], 0, 0
+    for group in sm.get_grouped_opcodes(CONTEXT):
+        lines, section = [], ""
+        for tag, i1, i2, j1, j2 in group:
+            if tag == "equal":
+                lines += [(" ", l) for l in a[i1:i2]]
+                continue
+            if not section:
+                section = sec_b[j1] if j1 < len(sec_b) else (sec_a[i1] if i1 < len(sec_a) else "")
+            for l in a[i1:i2]:
+                if l.strip():
+                    removed += 1
+                lines.append(("-", l))
+            for l in b[j1:j2]:
+                if l.strip():
+                    added += 1
+                lines.append(("+", l))
+        # drop pure blank-line changes
+        if not any(t != " " and l.strip() for t, l in lines):
+            continue
+        hunks.append({
+            "section": clean_heading(section),
+            "old_start": group[0][1] + 1,
+            "new_start": group[0][3] + 1,
+            "lines": lines,
+        })
+    return hunks, added, removed
+
+
+def build():
+    cfg = yaml.safe_load((ROOT / "sources.yaml").read_text(encoding="utf-8"))
+    cfg.setdefault("settings", {})
+    stale_days = cfg["settings"].get("stale_after_days", 21)
+    now = dt.datetime.now(dt.timezone.utc)
+
+    if OUT.exists():
+        shutil.rmtree(OUT)
+    (OUT / "changes").mkdir(parents=True)
+    (OUT / "current").mkdir(parents=True)
+
+    platforms, all_changes, status = [], [], []
+
+    for p in cfg["platforms"]:
+        repo = sync_repo(p["repo"])
+        web = p["repo"].rstrip("/")
+        service = p["service"]
+        files = [f for f in run("git", "ls-tree", "--name-only", "HEAD", f"{service}/", cwd=repo).splitlines()
+                 if f.endswith(".md")]
+        wanted = p.get("documents")
+        if wanted:
+            files = [f for f in files if Path(f).stem in wanted]
+
+        last_source = run("git", "log", "-1", "--format=%cI", cwd=repo).strip()
+        age = (now - dt.datetime.fromisoformat(last_source)).days
+        status.append({"platform": p["id"], "source": web, "last_source_commit": last_source,
+                       "age_days": age, "stale": age > stale_days})
+
+        blobs = Blobs(repo)
+        docs = []
+        for path in sorted(files):
+            name = Path(path).stem
+            doc_id = f"{p['id']}--{slug(name)}"
+            log = run("git", "log", "--reverse", "--format=%H%x1f%cI%x1f%s", "--", path, cwd=repo)
+            commits = [l.split("\x1f") for l in log.splitlines() if l]
+            prev, changes = None, []
+            for sha, date, subject in commits:
+                text = blobs.get(sha, path)
+                if text is None:
+                    continue
+                if prev is None:
+                    hunks, add, rem = [], text.count("\n") + 1, 0
+                else:
+                    hunks, add, rem = diff_hunks(prev, text)
+                    if not hunks:
+                        prev = text
+                        continue
+                kind = classify(subject, hunks)
+                cid = f"{date[:10]}--{doc_id}--{sha[:7]}"
+                sections = sorted({h["section"] for h in hunks if h["section"]})
+                entry = {
+                    "id": cid, "date": date, "platform": p["id"], "platform_name": p["name"],
+                    "doc_id": doc_id, "document": name, "type": kind,
+                    "added": add, "removed": rem, "sections": sections,
+                    "declared_dates": declared_dates(text),
+                    "source_commit": f"{web}/commit/{sha}",
+                }
+                changes.append(entry)
+                (OUT / "changes" / f"{cid}.json").write_text(
+                    json.dumps({**entry, "hunks": hunks}, ensure_ascii=False), encoding="utf-8")
+                prev = text
+            if prev is None:
+                continue
+            (OUT / "current" / f"{doc_id}.md").write_text(prev, encoding="utf-8")
+            subst = [c for c in changes if c["type"] == "substantive"]
+            docs.append({
+                "id": doc_id, "name": name,
+                "tracked_since": changes[0]["date"] if changes else None,
+                "last_change": changes[-1]["date"] if changes else None,
+                "last_substantive_change": subst[-1]["date"] if subst else None,
+                "versions": len(changes),
+                "substantive_changes": len(subst),
+                "declared_dates": declared_dates(prev),
+                "history_url": f"{web}/commits/main/{path.replace(' ', '%20')}",
+                "current_url": f"{web}/blob/main/{path.replace(' ', '%20')}",
+            })
+            all_changes += changes
+        blobs.close()
+        platforms.append({"id": p["id"], "name": p["name"], "service": service,
+                          "source": web, "declarations": p.get("declarations"), "documents": docs})
+
+    all_changes.sort(key=lambda c: c["date"], reverse=True)
+    (OUT / "index.json").write_text(json.dumps({
+        "generated_at": now.isoformat(timespec="seconds"),
+        "author": {"name": cfg["settings"].get("author", ""), "url": cfg["settings"].get("author_url", "")},
+        "platforms": platforms, "status": status,
+    }, ensure_ascii=False, indent=1), encoding="utf-8")
+    (OUT / "changes.json").write_text(json.dumps(all_changes, ensure_ascii=False), encoding="utf-8")
+
+    # Summary for the workflow (new substantive changes since previous build)
+    print(f"{len(all_changes)} versions, "
+          f"{sum(c['type'] == 'substantive' for c in all_changes)} substantive changes, "
+          f"{sum(len(p['documents']) for p in platforms)} documents")
+    for s in status:
+        if s["stale"]:
+            print(f"WARNING: {s['platform']} source has not updated for {s['age_days']} days", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    build()
