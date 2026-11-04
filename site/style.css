@@ -291,3 +291,32 @@ a.platform-title:hover h3 { text-decoration: underline; }
   .monogram.big { width: 48px; height: 48px; font-size: 15px; }
   .doc-table th:nth-child(5), .doc-table td:nth-child(5) { display: none; }
 }
+
+/* Paragraph view of a change */
+.change-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 14px; }
+.sum { padding: 4px 10px; border-radius: 20px; font-size: 13px; }
+.sum.modified { color: #7a5200; background: #fff4dc; }
+.sum.added { color: var(--positive); background: #eaf6ef; }
+.sum.removed { color: var(--negative); background: #fcf0f1; }
+.pi-list { padding: 6px 0; }
+.pi { margin: 0; padding: 14px 20px 14px 22px; border-left: 3px solid transparent; }
+.pi + .pi { border-top: 1px solid #f0f2f6; }
+.pi p { margin: 0; font-size: 14.5px; line-height: 1.65; color: #30354a; white-space: pre-wrap; word-break: break-word; }
+.pi-tag { display: inline-block; margin-bottom: 8px; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+.pi.mod { border-left-color: #e0a526; }
+.pi.mod .pi-tag { color: #7a5200; background: #fff4dc; }
+.pi-row { display: grid; grid-template-columns: 62px 1fr; gap: 12px; padding: 5px 0; }
+.pi-label { padding-top: 3px; color: var(--faint); font-size: 12px; font-weight: 650; }
+.pi.mod .pi-row:first-of-type p { color: #6d7388; }
+.pi.mod del { text-decoration: line-through; text-decoration-color: var(--negative); color: var(--negative); background: #fcf0f1; border-radius: 2px; }
+.pi.mod ins { text-decoration: none; color: #135c2c; background: #d4f0de; border-radius: 2px; }
+.pi.add { border-left-color: var(--positive); background: #f6fbf8; }
+.pi.add .pi-tag { color: var(--positive); background: #e2f4e9; }
+.pi.rem { border-left-color: #d9a3aa; }
+.pi.rem summary { cursor: pointer; list-style: none; display: flex; gap: 10px; align-items: baseline; }
+.pi.rem summary::-webkit-details-marker { display: none; }
+.pi.rem summary .pi-tag { color: var(--negative); background: #fcf0f1; margin: 0; flex: 0 0 auto; }
+.pi-preview { color: #9aa0b3; font-size: 13.5px; text-decoration: line-through; text-decoration-color: #e3b9bf; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pi.rem[open] .pi-preview { display: none; }
+.pi.rem[open] p { margin-top: 8px; color: #7a8090; text-decoration: line-through; text-decoration-color: #e3b9bf; }
+@media (max-width: 560px) { .pi-row { grid-template-columns: 1fr; gap: 2px; } .pi { padding: 12px 14px; } }

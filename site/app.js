@@ -430,26 +430,86 @@
     .replace(/⁠/g, "")
     .replace(/^\s*[*-]\s{1,4}/, "• ");
 
-  function renderHunk(h) {
-    const out = [], lines = h.lines;
+  // ----- paragraph view of a change -----
+  // A line is only "formatting" (Markdown underline, rule, empty bullet)
+  const isNoise = (l) => !l.trim() || /^\s*([-=_*]\s*){3,}$/.test(l) || /^\s*[*-]\s*$/.test(l);
+  const words = (l) => (l.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []);
+  // Dice similarity on words: 1 = same words, 0 = nothing in common
+  function similarity(a, b) {
+    const wa = words(a), wb = words(b);
+    if (!wa.length || !wb.length) return 0;
+    const count = {};
+    wa.forEach((w) => { count[w] = (count[w] || 0) + 1; });
+    let common = 0;
+    wb.forEach((w) => { if (count[w] > 0) { common++; count[w]--; } });
+    return 2 * common / (wa.length + wb.length);
+  }
+
+  // Turns a hunk into an ordered list of items: modified / added / removed paragraphs
+  function hunkItems(h) {
+    const items = [], lines = h.lines;
     for (let k = 0; k < lines.length;) {
-      const [t, l] = lines[k];
-      if (t === " ") { if (l.trim()) out.push(`<div class="dl ctx">${esc(pretty(l))}</div>`); k++; continue; }
+      if (lines[k][0] === " ") { k++; continue; }
       const dels = [], adds = [];
-      while (k < lines.length && lines[k][0] === "-") dels.push(lines[k++][1]);
-      while (k < lines.length && lines[k][0] === "+") adds.push(lines[k++][1]);
-      let D = dels.filter((x) => x.trim()), A = adds.filter((x) => x.trim());
-      const pD = D.map(pretty), pA = A.map(pretty);
-      // keep raw Markdown only when the change is inside a link address or formatting
-      if (pD.join("\n") !== pA.join("\n")) { D = pD; A = pA; }
-      const pairs = Math.min(D.length, A.length), hd = [], ha = [];
-      for (let p = 0; p < pairs; p++) { const [x, y] = wordDiff(D[p], A[p]); hd.push(x); ha.push(y); }
-      D.slice(pairs).forEach((x) => hd.push(`<del>${esc(x)}</del>`));
-      A.slice(pairs).forEach((x) => ha.push(`<ins>${esc(x)}</ins>`));
-      hd.forEach((x) => out.push(`<div class="dl del">${x}</div>`));
-      ha.forEach((x) => out.push(`<div class="dl add">${x}</div>`));
+      while (k < lines.length && lines[k][0] !== " ") {
+        const [t, l] = lines[k++];
+        if (isNoise(l)) continue;
+        (t === "-" ? dels : adds).push(l);
+      }
+      // pair each removed paragraph with its most similar added one (if similar enough)
+      const used = new Set(), pairOf = new Map();
+      dels.forEach((d, i) => {
+        let best = -1, bestS = 0;
+        adds.forEach((a, j) => {
+          if (used.has(j)) return;
+          const sc = similarity(pretty(d), pretty(a));
+          // short lines (dates, titles) can share few words and still be the same paragraph
+          const min = Math.max(words(d).length, words(a).length) <= 8 ? 0.25 : 0.5;
+          if (sc >= min && sc >= bestS - 0.25 && (best < 0 || sc > bestS)) { best = j; bestS = sc; }
+        });
+        if (best >= 0) { used.add(best); pairOf.set(best, i); }
+      });
+      const pairedDels = new Set(pairOf.values());
+      // removed paragraphs first (they come first in the old text), then additions and modifications in new order
+      dels.forEach((d, i) => { if (!pairedDels.has(i)) items.push({ kind: "removed", text: d }); });
+      adds.forEach((a, j) => {
+        if (pairOf.has(j)) items.push({ kind: "modified", before: dels[pairOf.get(j)], after: a });
+        else items.push({ kind: "added", text: a });
+      });
     }
-    return `<div class="hunk"><div class="hunk-head"><span>${h.section ? `Section: <b>${esc(h.section)}</b>` : "<b>Start of document</b>"}</span><span>line ${h.new_start}</span></div>${out.join("")}</div>`;
+    return items;
+  }
+
+  function renderItem(it) {
+    if (it.kind === "modified") {
+      let a = pretty(it.before), b = pretty(it.after);
+      if (a === b) { a = it.before; b = it.after; }   // change only inside a link address
+      const [x, y] = wordDiff(a, b);
+      return `<div class="pi mod"><span class="pi-tag">Modified</span>
+        <div class="pi-row"><span class="pi-label">Before</span><p>${x}</p></div>
+        <div class="pi-row"><span class="pi-label">After</span><p>${y}</p></div></div>`;
+    }
+    if (it.kind === "added") return `<div class="pi add"><span class="pi-tag">Added</span><p>${esc(pretty(it.text))}</p></div>`;
+    return `<details class="pi rem"><summary><span class="pi-tag">Removed</span><span class="pi-preview">${esc(pretty(it.text).slice(0, 140))}${pretty(it.text).length > 140 ? "…" : ""}</span></summary><p>${esc(pretty(it.text))}</p></details>`;
+  }
+
+  // Groups consecutive hunks of the same section into one card
+  function renderChangeBody(hunks) {
+    const groups = [];
+    for (const h of hunks) {
+      const items = hunkItems(h);
+      if (!items.length) continue;
+      const last = groups[groups.length - 1];
+      if (last && last.section === h.section) last.items.push(...items);
+      else groups.push({ section: h.section, items });
+    }
+    if (!groups.length) return `<div class="card pad muted">Only formatting changed in this version.</div>`;
+    const n = (k) => groups.reduce((a, g) => a + g.items.filter((i) => i.kind === k).length, 0);
+    const summary = [["modified", "modified"], ["added", "added"], ["removed", "removed"]]
+      .map(([k, label]) => n(k) ? `<span class="sum ${k}"><b>${n(k)}</b> ${label}</span>` : "").join("");
+    return `<div class="change-summary">${summary}<span class="muted small">paragraphs in ${groups.length} section${groups.length > 1 ? "s" : ""}</span></div>` +
+      groups.map((g) => `<div class="hunk"><div class="hunk-head"><span>${g.section ? `Section: <b>${esc(g.section)}</b>` : "<b>Start of document</b>"}</span><span>${g.items.length} change${g.items.length > 1 ? "s" : ""}</span></div>
+        <div class="pi-list">${g.items.map(renderItem).join("")}</div></div>`).join("");
   }
 
   async function viewChange(id) {
@@ -461,7 +521,7 @@
     const older = pos >= 0 ? docChanges[pos + 1] : null;
     const body = c.type === "first"
       ? `<div class="card pad">This is the first version recorded for this document. <a class="text-link" href="#/doc/${enc(c.doc_id)}">Read the current text <span>→</span></a></div>`
-      : c.hunks.map(renderHunk).join("");
+      : renderChangeBody(c.hunks);
 
     app.innerHTML = `
       <section class="shell page-head">
