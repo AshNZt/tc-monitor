@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-05T10:43:29+00:00",
+ "generated_at": "2026-11-05T10:56:21+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -821,6 +821,32 @@
    "last_source_commit": "2026-11-05T01:06:09Z",
    "age_days": 0,
    "stale": false
+  }
+ ],
+ "upcoming": [
+  {
+   "effective": "2026-11-20",
+   "sentence": "We're updating the Meta Commercial Terms. These updates will go into effect on November 20, 2026. Read the updated Terms.",
+   "link": "https://www.facebook.com/legal/commercial_terms_preview",
+   "link_text": "Read the updated Terms",
+   "first_seen": "2026-10-01T00:31:58Z",
+   "date_history": [
+    {
+     "date": "2026-10-30",
+     "seen": "2026-10-01T00:31:58Z",
+     "change": "2026-10-01--meta--facebook--commercial-terms--c2e2067"
+    },
+    {
+     "date": "2026-11-20",
+     "seen": "2026-10-23T00:32:00Z",
+     "change": "2026-10-23--meta--facebook--commercial-terms--ac71532"
+    }
+   ],
+   "status": "upcoming",
+   "platform": "meta",
+   "platform_name": "Meta",
+   "doc_id": "meta--facebook--commercial-terms",
+   "document": "Facebook Commercial Terms"
   }
  ]
 }
