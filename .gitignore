@@ -3,3 +3,4 @@ __pycache__/
 .DS_Store
 sites/
 node_modules/
+digest-preview.html

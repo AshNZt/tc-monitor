@@ -121,12 +121,25 @@ def words_of(line):
     return re.findall(r"[^\W_]+", t.lower())
 
 
+# Page elements that are not part of the legal text (menus, survey banners, help links, logos)
+CHROME_RE = re.compile(
+    r"have a moment|tell us how we|take (the )?survey|other ways to get help|copy link|related articles|"
+    r"was this (page |article )?helpful|request user information|submit an emergency|preserve account records|"
+    r"i have a different question|view printable version|^\s*!\[|logo for|^\s*_?notice_?\s*$|skip to (main )?content",
+    re.I)
+MONTHS = set("jan feb mar apr may jun jul aug sep sept oct nov dec january february march april june july "
+             "august september october november december".split())
+
+
 def changed_words(hunks):
-    """Words removed and added across the hunks (multiset difference, so moved text counts zero)."""
+    """Words removed and added across the hunks (multiset difference, so moved text counts zero).
+    Lines that are page elements (CHROME_RE) are ignored."""
     from collections import Counter
     rem, add = Counter(), Counter()
     for h in hunks:
         for t, l in h["lines"]:
+            if CHROME_RE.search(l):
+                continue
             if t == "-":
                 rem.update(words_of(l))
             elif t == "+":
@@ -171,6 +184,7 @@ def content_key(text):
 
 REVERT_WINDOW_DAYS = 60   # back to wording seen within this many days -> "reverted"
 TEMPORARY_DAYS = 30       # wording that disappears again within this many days -> "temporary"
+FLIP_MAX_WORDS = 50       # only flip-flops up to this size are hidden; larger ones stay visible, flagged
 
 
 def days_between(a, b):
@@ -295,11 +309,20 @@ def build():
                     kind = classify(subject, hunks)
                     key = content_key(text)
                     n_words, which = changed_words(hunks) if prev is not None else (0, set())
-                    if kind == "substantive" and prev is not None:
+                    announces = any(t != " " and ANNOUNCE_RE.search(l) for h in hunks for t, l in h["lines"])
+                    unstable = False
+                    size_new, size_old = len(key.split()), len(content_key(prev).split()) if prev is not None else 0
+                    after_error = bool(changes) and changes[-1]["type"] == "fetch-error"
+                    if kind == "substantive" and prev is not None and size_old > 200 and size_new < 0.4 * size_old:
+                        kind = "fetch-error"     # the source page was empty or an error page
+                    elif kind == "substantive" and after_error and len(keys) >= 2 and keys[-2][1] == key:
+                        kind = "fetch-error"     # back to the text from before the error page
+                    elif kind == "substantive" and prev is not None:
                         if key == content_key(prev) or n_words == 0:
                             kind = "formatting"
-                        elif n_words <= SMALL_EDIT_WORDS and not (which & LEGAL_WORDS) and not any(
-                                t != " " and ANNOUNCE_RE.search(l) for h in hunks for t, l in h["lines"]):
+                        elif which and all(w.isdigit() or w in MONTHS for w in which) and not announces:
+                            kind = "date-only"
+                        elif n_words <= SMALL_EDIT_WORDS and not (which & LEGAL_WORDS) and not announces:
                             kind = "small-edit"
                         else:
                             for j in range(len(keys) - 2, -1, -1):
@@ -307,11 +330,18 @@ def build():
                                 if days_between(k_date, date) > REVERT_WINDOW_DAYS:
                                     break
                                 if k_key == key:
-                                    kind = "reverted"
-                                    # changes since then were short-lived
+                                    # Small flip-flops are noise and get hidden. Large ones may be real
+                                    # updates rolled back (or served alternately): keep them visible, flagged.
+                                    if n_words <= FLIP_MAX_WORDS:
+                                        kind = "reverted"
+                                    else:
+                                        unstable = True
                                     for c in changes[k_idx + 1:]:
                                         if c["type"] == "substantive" and days_between(c["date"], date) <= TEMPORARY_DAYS:
-                                            c["type"] = "temporary"
+                                            if c.get("words_changed", 0) <= FLIP_MAX_WORDS:
+                                                c["type"] = "temporary"
+                                            else:
+                                                c["unstable"] = True
                                     break
                     cid = f"{date[:10]}--{doc_id}--{sha[:7]}"
                     sections = sorted({h["section"] for h in hunks if h["section"]})
@@ -319,6 +349,7 @@ def build():
                         "id": cid, "date": date, "platform": p["id"], "platform_name": p["name"],
                         "service": service, "doc_id": doc_id, "document": label, "type": kind,
                         "added": add, "removed": rem, "words_changed": n_words, "sections": sections,
+                        "unstable": unstable,
                         "declared_dates": declared_dates(text),
                         "source_commit": f"{web}/commit/{sha}",
                     }

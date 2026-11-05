@@ -8,14 +8,15 @@
   const TYPE_LABEL = {
     substantive: "Text change",
     first: "First record",
-    formatting: "Links or formatting only",
+    formatting: "Links, formatting or page elements",
+    "fetch-error": "Source page error",
     "small-edit": "Small edit",
     reverted: "Reverted to earlier wording",
     temporary: "Short-lived wording",
     "date-only": "Date only",
     technical: "Technical",
   };
-  const MINOR = new Set(["formatting", "small-edit", "reverted", "temporary", "date-only", "technical"]);
+  const MINOR = new Set(["formatting", "fetch-error", "small-edit", "reverted", "temporary", "date-only", "technical"]);
 
   // ---------- helpers ----------
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
@@ -665,6 +666,7 @@
           ${c.type !== "first" ? `<span>About <b>${c.words_changed ?? "?"}</b> words changed</span>` : ""}
           ${c.declared_dates.length ? `<span>Date stated in document: <b>${esc(c.declared_dates.join(", "))}</b></span>` : ""}
         </div>
+        ${c.unstable ? `<div class="notice">This wording did not stay stable: the document switched back and forth between versions within a few weeks. Check the previous and next changes before relying on it.</div>` : ""}
         <div class="btn-row">
           <span>${older ? `<a class="btn" href="#/change/${enc(older.id)}">← Previous change</a>` : ""}${newer ? `<a class="btn" href="#/change/${enc(newer.id)}">Next change →</a>` : ""}</span>
           <span><a class="btn" href="#/doc/${enc(c.doc_id)}">Current text</a><a class="btn" href="${esc(c.source_commit)}" target="_blank" rel="noopener">Source record ↗</a>${d ? `<a class="btn" href="${esc(d.history_url)}" target="_blank" rel="noopener">Full history ↗</a>` : ""}</span>
@@ -724,7 +726,7 @@
         <ol>
           <li><a href="https://opentermsarchive.org">Open Terms Archive</a> downloads each document several times a day and records every new version in a public archive.</li>
           <li>Once a week this site reads that archive and compares each version with the previous one.</li>
-          <li>Each change is classified. Only <b>text changes</b> are counted in the totals and charts. These are hidden by default as <b>minor changes</b>: edits to links or formatting only, <b>small edits</b> of at most 5 words (typos, contact details, names) unless they touch words that can change the meaning such as "may", "must", "not" or "consent", wording that returns to a version seen in the previous 60 days, wording that disappears again within 30 days, edits to the "updated" date only, and technical updates of the archive itself.</li>
+          <li>Each change is classified. Only <b>text changes</b> are counted in the totals and charts. These are hidden by default as <b>minor changes</b>: edits to links or formatting only, <b>small edits</b> of at most 5 words (typos, contact details, names) unless they touch words that can change the meaning such as "may", "must", "not" or "consent", changes to page elements such as menus or survey banners, versions recorded while the source page showed an error, small edits of up to 50 words that return to a version seen in the previous 60 days or disappear again within 30 days (larger ones stay visible, with a warning), edits to the "updated" date only, and technical updates of the archive itself.</li>
         </ol>
         <h2>Reading the dates</h2>
         <p>The <b>detection date</b> is when the new wording was first recorded. Platforms sometimes announce changes in advance, or change the text without updating the date in the document, so the <b>date stated in the document</b> is shown separately.</p>

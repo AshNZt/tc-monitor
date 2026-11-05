@@ -52,5 +52,10 @@ settings:
   # Shown in the footer of the site
   author: Alessandro Morigi
   author_url: https://github.com/AshNZt
+  # Public address of the site (used for links in the email and the RSS feed)
+  site_url: https://ashnzt.github.io/tc-monitor
+  # Weekly email: how many days it covers, and whether to send it when nothing changed
+  digest_days: 7
+  digest_send_empty: true
   # Warn on the dashboard if a source has not recorded anything for this many days
   stale_after_days: 21
