@@ -207,6 +207,44 @@ def lead_in(lines, j):
     return ""
 
 
+# ---- topics ------------------------------------------------------------------
+# A change gets a topic when its changed text matches the topic's keywords.
+# Order = display order. Keep the patterns simple so a colleague can edit them.
+TOPICS = [
+    ("ai", "AI", r"\b(ai|a\.i\.|artificial intelligence|machine learning|generative|llms?|chatbots?|meta ai|"
+                 r"ai models?|train(s|ed|ing)? (our|ai|the) |model training|automated (systems?|decision\w*|processing)|algorithm\w*)\b"),
+    ("minors", "Minors", r"\b(minors?|teens?|teenagers?|children|child|kids|youth|young people|parental|parents?|guardians?|"
+                         r"under (the age of )?1[3-8]|aged? (of )?1[3-8]|age verification|age-appropriate)\b"),
+    ("data", "Personal data", r"\b(personal (data|information)|privacy|gdpr|data protection|data transfers?|retention|retain|"
+                              r"cookies?|trackers?|tracking|biometric\w*|location (data|information)|legal bas[ie]s|consent|"
+                              r"data subject|delete your|your information)\b"),
+    ("ads", "Advertising", r"\b(ads?|advertis\w*|advertisers?|sponsored|marketing|promotions?|targeting|branded content)\b"),
+    ("moderation", "Content moderation", r"\b(remov(e|al|ing)|restrict\w*|suspen\w*|disabl\w*|violat\w*|community standards|harmful|"
+                                         r"hate speech|misinformation|warning screens?|appeals?|enforce\w*|moderation|prohibited)\b"),
+    ("disputes", "Disputes & liability", r"\b(arbitration|disputes?|governing law|jurisdiction|courts?|liabilit\w*|liable|"
+                                         r"indemni\w*|class action|warrant(y|ies)|limitation of liability)\b"),
+    ("payments", "Payments & pricing", r"\b(prices?|pricing|fees?|payments?|refunds?|subscriptions?|billing|credits?|purchases?|"
+                                       r"taxe?s|invoices?|checkout)\b"),
+    ("security", "Fraud & security", r"\b(fraud\w*|scams?|security|breach\w*|vulnerabilit\w*|impersonat\w*|"
+                                     r"verify (your )?identity|identity verification|account integrity)\b"),
+    ("ip", "IP & licences", r"\b(intellectual property|copyrights?|trademarks?|licen[cs]es?|ownership|outputs?|scrap\w*|crawl\w*)\b"),
+    ("government", "Law enforcement", r"\b(law enforcement|government (agenc\w*|requests?)|subpoenas?|court orders?|"
+                                      r"emergency requests?|legal requests?|authorities)\b"),
+]
+TOPIC_RX = [(k, label, re.compile(rx, re.I)) for k, label, rx in TOPICS]
+
+
+def changed_text(hunks):
+    parts = [plain(l) for h in hunks for t, l in h["lines"] if t != " " and l.strip() and not CHROME_RE.search(l)]
+    return " ".join(p for p in parts if p)
+
+
+def topics_for(text, sections):
+    blob = text + " " + " ".join(sections)
+    hits = [(len(rx.findall(blob)), k) for k, _, rx in TOPIC_RX]
+    return [k for n, k in sorted(hits, key=lambda x: -x[0]) if n][:3]
+
+
 # ---- announced (upcoming) updates -------------------------------------------
 MONTH_NUM = {m: i for i, ms in enumerate([("jan", "january"), ("feb", "february"), ("mar", "march"), ("apr", "april"),
              ("may",), ("jun", "june"), ("jul", "july"), ("aug", "august"), ("sep", "sept", "september"),
@@ -319,6 +357,7 @@ def build():
     (OUT / "current").mkdir(parents=True)
 
     platforms, all_changes, status, upcoming = [], [], [], []
+    search_index = {}
 
     repos = {}
 
@@ -411,11 +450,15 @@ def build():
                                     break
                     cid = f"{date[:10]}--{doc_id}--{sha[:7]}"
                     sections = sorted({h["section"] for h in hunks if h["section"]})
+                    ctext = changed_text(hunks) if prev is not None else ""
+                    if kind not in ("formatting", "fetch-error", "technical", "first"):
+                        search_index[cid] = ctext[:600]
                     entry = {
                         "id": cid, "date": date, "platform": p["id"], "platform_name": p["name"],
                         "service": service, "doc_id": doc_id, "document": label, "type": kind,
                         "added": add, "removed": rem, "words_changed": n_words, "sections": sections,
                         "unstable": unstable,
+                        "topics": topics_for(ctext, sections) if kind in ("substantive", "small-edit") else [],
                         "declared_dates": declared_dates(text),
                         "source_commit": f"{web}/commit/{sha}",
                     }
@@ -464,8 +507,11 @@ def build():
         "author": {"name": cfg["settings"].get("author", ""), "url": cfg["settings"].get("author_url", "")},
         "platforms": platforms, "status": status,
         "upcoming": sorted(upcoming, key=lambda a: a["effective"]),
+        "topics": [{"id": k, "label": label} for k, label, _ in TOPICS],
     }, ensure_ascii=False, indent=1), encoding="utf-8")
     (OUT / "changes.json").write_text(json.dumps(all_changes, ensure_ascii=False), encoding="utf-8")
+    # changed text of each change, loaded by the site only when someone searches
+    (OUT / "search.json").write_text(json.dumps(search_index, ensure_ascii=False), encoding="utf-8")
 
     # Summary for the workflow (new substantive changes since previous build)
     print(f"{len(all_changes)} versions, "

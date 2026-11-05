@@ -460,3 +460,24 @@ body.ai-open .ai-suggest button:nth-child(3) { animation-delay: 120ms; }
 .up-moved { display: inline-block; margin-top: 10px; padding: 4px 10px; color: #8a1c2b; background: #fdecee; border-radius: 6px; font-size: 13px; font-weight: 600; }
 .up-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 @media (max-width: 640px) { .up-card { grid-template-columns: 1fr; } .up-date { flex-direction: row; align-items: baseline; gap: 10px; border-right: 0; border-bottom: 1px solid #f3e6c8; } }
+
+/* Topics */
+.topic-browser { display: flex; flex-wrap: wrap; gap: 8px; }
+.topic-browser.small-gap { margin: 2px 0 6px; gap: 6px; }
+.topic-chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px; font-size: 13.5px; font-weight: 600; color: var(--tc, #3c4258); background: var(--tb, #f1f3f7); border: 1px solid transparent; transition: transform .15s ease, border-color .15s ease; }
+.topic-chip b { padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,.7); font-size: 12px; }
+.topic-chip:hover { transform: translateY(-1px); border-color: currentColor; }
+.small-gap .topic-chip { padding: 4px 10px; font-size: 12.5px; }
+.topics { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+.topic { padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 650; color: var(--tc, #4b5168); background: var(--tb, #f1f3f7); }
+.t-ai { --tc: #4b3a99; --tb: #ece8fb; }
+.t-minors { --tc: #9a3d12; --tb: #fdeee4; }
+.t-data { --tc: #1f5f8a; --tb: #e5f1fa; }
+.t-ads { --tc: #7a5200; --tb: #fff3d6; }
+.t-moderation { --tc: #8a1c2b; --tb: #fdecee; }
+.t-disputes { --tc: #3c4258; --tb: #eceef3; }
+.t-payments { --tc: #135c2c; --tb: #e4f5ea; }
+.t-security { --tc: #6b2f7a; --tb: #f5e9f8; }
+.t-ip { --tc: #2d5f5a; --tb: #e2f2ef; }
+.t-government { --tc: #44506b; --tb: #e8ecf4; }
+.feed-section .topics + * { display: block; }

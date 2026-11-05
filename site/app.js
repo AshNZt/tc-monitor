@@ -72,12 +72,25 @@
     toast(`Exported ${list.length} changes`);
   }
 
+  const topicLabel = (id) => ((state.index.topics || []).find((t) => t.id === id) || { label: id }).label;
+  const topicTags = (c) => (c.topics || []).length ? `<span class="topics">${c.topics.map((t) => `<span class="topic t-${t}">${esc(topicLabel(t))}</span>`).join("")}</span>` : "";
+
+  // Topic chips with counts (last 12 months), linking to the filtered change log
+  function topicBrowser(list, extraQuery = "") {
+    const recent = list.filter((c) => c.type === "substantive" && daysAgo(c.date) <= 365);
+    const n = {};
+    recent.forEach((c) => (c.topics || []).forEach((t) => { n[t] = (n[t] || 0) + 1; }));
+    const items = (state.index.topics || []).filter((t) => n[t.id]);
+    if (!items.length) return "";
+    return `<div class="topic-browser">${items.map((t) => `<a class="topic-chip t-${t.id}" href="#/changes?topic=${t.id}${extraQuery}">${esc(t.label)} <b>${n[t.id]}</b></a>`).join("")}</div>`;
+  }
+
   function feedRow(c) {
     const p = P(c.platform);
     return `<a class="feed-row" href="#/change/${enc(c.id)}">
       <span class="feed-date">${fmtDate(c.date)}</span>
       <div class="feed-doc" style="--platform:${p.color}"><i class="platform-dot"></i><div><strong>${esc(p.name)}</strong><span> · ${esc(c.document)}</span>${typeTag(c.type)}</div></div>
-      <span class="feed-section">${esc(c.sections.slice(0, 3).join(" · ")) || "&nbsp;"}</span>
+      <span class="feed-section">${topicTags(c)}${esc(c.sections.slice(0, 2).join(" · ")) || (c.topics && c.topics.length ? "" : "&nbsp;")}</span>
       ${diffBadge(c)}
     </a>`;
   }
@@ -220,6 +233,11 @@
         ${chart.html}
       </section>
 
+      <section class="shell section-block" id="topics">
+        <div class="section-heading compact"><div><p class="eyebrow">Topics</p><h2>Browse by topic</h2><p>Text changes of the last 12 months, by subject.</p></div></div>
+        ${topicBrowser(changes)}
+      </section>
+
       <section class="shell section-block" id="platforms">
         <div class="section-heading compact">
           <div><p class="eyebrow">Coverage</p><h2>Platforms</h2><p>Monitoring across products, services and policy documents.</p></div>
@@ -332,6 +350,11 @@
         </table></div>
       </section>
 
+      <section class="shell section-block">
+        <div class="section-heading compact"><div><p class="eyebrow">Topics</p><h2>What the changes are about</h2><p>Text changes of the last 12 months, by subject.</p></div></div>
+        ${topicBrowser(all, `&platform=${id}`) || `<p class="muted">No text changes in the last 12 months.</p>`}
+      </section>
+
       ${topSecs.length ? `<section class="shell section-block">
         <div class="section-heading compact"><div><p class="eyebrow">Hotspots</p><h2>Most changed sections</h2><p>Sections with the most text changes in the last 12 months.</p></div></div>
         <div class="card pad hotspots">${topSecs.map(([name, n]) => `<a class="hot" href="#/changes?platform=${id}&q=${enc(name)}"><span>${esc(name)}</span><b>${n}</b></a>`).join("")}</div>
@@ -359,6 +382,7 @@
       doc: params.get("doc") || "",
       month: params.get("month") || "",
       q: params.get("q") || "",
+      topic: params.get("topic") || "",
       all: params.get("all") === "1",
     };
     let limit = 150;
@@ -367,14 +391,15 @@
       <section class="shell page-head">
         <p class="eyebrow">Change log</p>
         <h1>All changes</h1>
-        <p class="subtitle">Every recorded change, newest first. Filter by platform, document or section.</p>
+        <p class="subtitle">Every recorded change, newest first. Filter by platform, document or topic, or search the changed text.</p>
       </section>
       <section class="shell">
         <article class="feed-card">
           <div class="filter-row" id="chips"></div>
           <div class="toolbar-row">
             <select id="f-doc" aria-label="Document"></select>
-            <input type="search" id="f-q" placeholder="Filter by section or document, e.g. cookies, AI, minors" value="${esc(f.q)}" aria-label="Filter">
+            <select id="f-topic" aria-label="Topic"><option value="">All topics</option>${(index.topics || []).map((t) => `<option value="${t.id}" ${t.id === f.topic ? "selected" : ""}>${esc(t.label)}</option>`).join("")}</select>
+            <input type="search" id="f-q" placeholder="Search the changed text, e.g. scraping, biometric, arbitration" value="${esc(f.q)}" aria-label="Filter">
             <label class="check"><input type="checkbox" id="f-all" ${f.all ? "checked" : ""}> Include minor changes</label>
             <button class="export-button" type="button" id="export"><svg viewBox="0 0 24 24"><path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3"/></svg>Export</button>
           </div>
@@ -391,7 +416,9 @@
         (!f.platform || c.platform === f.platform) &&
         (!f.doc || c.doc_id === f.doc) &&
         (!f.month || monthKey(c.date) === f.month) &&
-        (!q || c.document.toLowerCase().includes(q) || c.sections.join(" ").toLowerCase().includes(q)));
+        (!f.topic || (c.topics || []).includes(f.topic)) &&
+        (!q || c.document.toLowerCase().includes(q) || c.sections.join(" ").toLowerCase().includes(q) ||
+          (state.search && (state.search[c.id] || "").toLowerCase().includes(q))));
     };
 
     const render = () => {
@@ -432,7 +459,17 @@
       sync();
     };
     document.getElementById("f-doc").onchange = (e) => { f.doc = e.target.value; sync(); };
-    document.getElementById("f-q").oninput = (e) => { f.q = e.target.value; sync(); };
+    document.getElementById("f-topic").onchange = (e) => { f.topic = e.target.value; sync(); };
+    const loadSearch = async () => {
+      if (state.search || state.searchLoading) return;
+      state.searchLoading = true;
+      try { state.search = await getJSON("data/search.json"); } catch (e) { console.error(e); }
+      state.searchLoading = false;
+      sync();
+    };
+    document.getElementById("f-q").onfocus = loadSearch;
+    document.getElementById("f-q").oninput = (e) => { f.q = e.target.value; loadSearch(); sync(); };
+    if (f.q) loadSearch();
     document.getElementById("f-all").onchange = (e) => { f.all = e.target.checked; sync(); };
     document.getElementById("more").onclick = () => { limit += 300; render(); };
     document.getElementById("export").onclick = () => exportCSV(filtered(), "tc-monitor-changes.csv");
@@ -696,6 +733,7 @@
         <div class="crumbs"><a href="#/">Overview</a> › <a href="#/platform/${p.id || ""}">${esc(p.name)}</a> › <a href="#/doc/${enc(c.doc_id)}">${esc(c.document)}</a></div>
         <p class="eyebrow" style="color:${p.color} !important">${esc(p.name)}</p>
         <h1>${esc(c.document)} ${typeTag(c.type)}</h1>
+        ${(c.topics || []).length ? `<div class="topic-browser small-gap">${c.topics.map((t) => `<a class="topic-chip t-${t}" href="#/changes?topic=${t}">${esc(topicLabel(t))}</a>`).join("")}</div>` : ""}
         <div class="meta-row">
           <span>Detected <b>${fmtDate(c.date, { weekday: "short", day: "numeric", month: "long", year: "numeric" })}</b></span>
           ${c.type !== "first" ? `<span>About <b>${c.words_changed ?? "?"}</b> words changed</span>` : ""}
@@ -763,6 +801,8 @@
           <li>Once a week this site reads that archive and compares each version with the previous one.</li>
           <li>Each change is classified. Only <b>text changes</b> are counted in the totals and charts. These are hidden by default as <b>minor changes</b>: edits to links or formatting only, <b>small edits</b> of at most 5 words (typos, contact details, names) unless they touch words that can change the meaning such as "may", "must", "not" or "consent", changes to page elements such as menus or survey banners, versions recorded while the source page showed an error, small edits of up to 50 words that return to a version seen in the previous 60 days or disappear again within 30 days (larger ones stay visible, with a warning), edits to the "updated" date only, and technical updates of the archive itself.</li>
         </ol>
+        <h2>Topics</h2>
+        <p>Each text change gets up to three topics (AI, Minors, Personal data, Advertising, Content moderation, Disputes &amp; liability, Payments &amp; pricing, Fraud &amp; security, IP &amp; licences, Law enforcement), assigned automatically from keywords in the changed text. They are a guide for browsing, not a legal classification: always read the change itself.</p>
         <h2>Reading the dates</h2>
         <p>The <b>detection date</b> is when the new wording was first recorded. Platforms sometimes announce changes in advance, or change the text without updating the date in the document, so the <b>date stated in the document</b> is shown separately.</p>
         <h2>Which version of the documents?</h2>
