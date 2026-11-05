@@ -110,6 +110,9 @@ required require requires prohibited prohibit allowed allow permitted permit may
 including excluding without within before after days months years minimum maximum free paid
 consent opt object delete sell share train training""".split())
 SMALL_EDIT_WORDS = 5   # at most this many words changed -> "small edit"
+# Lines announcing upcoming changes or effective dates are never "small edits":
+# moving an effective date (e.g. a postponed update) matters even if one word changes
+ANNOUNCE_RE = re.compile(r"go(es)? into effect|take[s]? effect|effective|we('| a)re updating|we have updated|updated terms|will apply from", re.I)
 
 
 def words_of(line):
@@ -278,7 +281,8 @@ def build():
                     if kind == "substantive" and prev is not None:
                         if key == content_key(prev) or n_words == 0:
                             kind = "formatting"
-                        elif n_words <= SMALL_EDIT_WORDS and not (which & LEGAL_WORDS):
+                        elif n_words <= SMALL_EDIT_WORDS and not (which & LEGAL_WORDS) and not any(
+                                t != " " and ANNOUNCE_RE.search(l) for h in hunks for t, l in h["lines"]):
                             kind = "small-edit"
                         else:
                             for j in range(len(keys) - 2, -1, -1):
