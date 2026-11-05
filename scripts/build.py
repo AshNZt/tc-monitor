@@ -509,9 +509,17 @@ def build():
         "upcoming": sorted(upcoming, key=lambda a: a["effective"]),
         "topics": [{"id": k, "label": label} for k, label, _ in TOPICS],
     }, ensure_ascii=False, indent=1), encoding="utf-8")
-    (OUT / "changes.json").write_text(json.dumps(all_changes, ensure_ascii=False), encoding="utf-8")
+    # The site loads the main list on every page, so keep it small: text changes and first
+    # records only, without fields the list never shows. Minor changes go in a second file
+    # that is loaded only when someone ticks "Include minor changes".
+    MINOR_TYPES = {"formatting", "fetch-error", "small-edit", "reverted", "temporary", "date-only", "technical"}
+    slim = lambda c: {k: v for k, v in c.items() if k != "source_commit" and v not in ([], False, None)}
+    (OUT / "changes.json").write_text(json.dumps(
+        [slim(c) for c in all_changes if c["type"] not in MINOR_TYPES], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    (OUT / "changes-minor.json").write_text(json.dumps(
+        [slim(c) for c in all_changes if c["type"] in MINOR_TYPES], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     # changed text of each change, loaded by the site only when someone searches
-    (OUT / "search.json").write_text(json.dumps(search_index, ensure_ascii=False), encoding="utf-8")
+    (OUT / "search.json").write_text(json.dumps(search_index, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     # Summary for the workflow (new substantive changes since previous build)
     print(f"{len(all_changes)} versions, "

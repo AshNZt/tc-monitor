@@ -11,6 +11,7 @@
   <link rel="alternate" type="application/rss+xml" title="T&amp;C Monitor changes" href="feed.xml">
 </head>
 <body>
+  <a class="skip-link" href="#app">Skip to content</a>
   <header class="topbar">
     <div class="shell topbar-inner">
       <a class="brand" href="#/" aria-label="T and C Monitor home">
@@ -25,8 +26,9 @@
     </div>
   </header>
 
-  <main id="app" aria-live="polite">
-    <section class="shell page-head"><p class="muted">Loading…</p></section>
+  <main id="app" aria-live="polite" tabindex="-1">
+    <section class="shell page-head" aria-busy="true"><span class="skel w15"></span><span class="skel h1 w50"></span><span class="skel w30"></span></section>
+    <section class="shell summary-grid"><div class="card skel-card"></div><div class="card skel-card"></div><div class="card skel-card"></div><div class="card skel-card"></div></section>
   </main>
 
   <footer id="footer">

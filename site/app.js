@@ -19,6 +19,18 @@
   const MINOR = new Set(["formatting", "fetch-error", "small-edit", "reverted", "temporary", "date-only", "technical"]);
 
   // ---------- helpers ----------
+  const skeletonRows = (n) => `<div class="skel-list">${Array.from({ length: n }, () => `<div class="skel-row"><span class="skel w20"></span><span class="skel w50"></span><span class="skel w15"></span></div>`).join("")}</div>`;
+  const skeletonPage = () => `<section class="shell page-head" aria-busy="true"><span class="skel w15"></span><span class="skel h1 w50"></span><span class="skel w30"></span></section>
+    <section class="shell"><div class="card">${skeletonRows(5)}</div></section>`;
+  // fields left out of the data files when empty
+  const fillDefaults = (c) => { c.sections ||= []; c.topics ||= []; c.declared_dates ||= []; c.unstable ||= false; return c; };
+  // minor changes are in a separate file, loaded on demand
+  async function ensureMinor() {
+    if (state.minorLoaded) return;
+    const minor = (await getJSON("data/changes-minor.json")).map(fillDefaults);
+    state.changes = state.changes.concat(minor).sort((a, b) => b.date.localeCompare(a.date));
+    state.minorLoaded = true;
+  }
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmtDate = (iso, opts = { day: "numeric", month: "short", year: "numeric" }) =>
@@ -194,7 +206,7 @@
           </div>
           <div class="sparkline-block"><span>Monthly activity · 12 months</span>${sparkline(spark)}</div>
           <p class="recent-label">Most recent changes</p>
-          <div>${recent.length ? recent.map((c) => `<a class="mini-change" href="#/change/${enc(c.id)}"><span class="mini-date">${short(c.date)}<br>${new Date(c.date).getFullYear()}</span><div class="mini-doc"><strong>${esc(c.document)}</strong><span>${esc(c.sections[0] || "")}</span></div><span class="diff"><span class="plus">+${c.added}</span><span class="minus">−${c.removed}</span></span></a>`).join("")
+          <div>${recent.length ? recent.map((c) => `<a class="mini-change" href="#/change/${enc(c.id)}"><span class="mini-date">${short(c.date)}<br>${new Date(c.date).getFullYear()}</span><div class="mini-doc"><strong>${esc(c.document)}</strong><span>${esc(c.sections[0] || "")}</span></div>${diffBadge(c, "diff")}</a>`).join("")
             : `<p class="muted small">No text changes recorded yet.</p>`}</div>
           <a class="platform-link" href="#/platform/${p.id}">Open platform details <span>→</span></a>
         </div>
@@ -411,7 +423,7 @@
 
     const filtered = () => {
       const q = f.q.toLowerCase();
-      return changes.filter((c) =>
+      return state.changes.filter((c) =>
         (f.all || !MINOR.has(c.type)) &&
         (!f.platform || c.platform === f.platform) &&
         (!f.doc || c.doc_id === f.doc) &&
@@ -470,7 +482,12 @@
     document.getElementById("f-q").onfocus = loadSearch;
     document.getElementById("f-q").oninput = (e) => { f.q = e.target.value; loadSearch(); sync(); };
     if (f.q) loadSearch();
-    document.getElementById("f-all").onchange = (e) => { f.all = e.target.checked; sync(); };
+    document.getElementById("f-all").onchange = async (e) => {
+      f.all = e.target.checked;
+      if (f.all && !state.minorLoaded) { document.getElementById("list").innerHTML = skeletonRows(6); await ensureMinor(); }
+      sync();
+    };
+    if (f.all && !state.minorLoaded) ensureMinor().then(sync);
     document.getElementById("more").onclick = () => { limit += 300; render(); };
     document.getElementById("export").onclick = () => exportCSV(filtered(), "tc-monitor-changes.csv");
     render();
@@ -718,7 +735,7 @@
   }
 
   async function viewChange(id) {
-    const c = await getJSON(`data/changes/${enc(id)}.json`);
+    const c = fillDefaults(await getJSON(`data/changes/${enc(id)}.json`));
     const d = docById(c.doc_id), p = P(c.platform);
     const docChanges = state.changes.filter((x) => x.doc_id === c.doc_id && !MINOR.has(x.type));
     const pos = docChanges.findIndex((x) => x.id === c.id);
@@ -881,16 +898,21 @@
   function notFound() { app.innerHTML = `<section class="shell page-head"><h1>Not found</h1><p><a class="text-link" href="#/">Back to overview <span>→</span></a></p></section>`; }
 
   // ---------- router ----------
+  route.count = 0;
   async function route() {
     const [path, qs] = location.hash.replace(/^#/, "").split("?");
     const parts = (path || "/").split("/").filter(Boolean);
     const section = !parts.length || ["platform", "doc"].includes(parts[0]) ? "home" : ["changes", "change"].includes(parts[0]) ? "changes" : parts[0];
-    document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.nav === section));
+    document.querySelectorAll(".nav a").forEach((a) => {
+      const on = a.dataset.nav === section;
+      a.classList.toggle("active", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
     try {
       if (!parts.length) viewHome();
       else if (parts[0] === "changes") viewChanges(new URLSearchParams(qs || ""));
-      else if (parts[0] === "change") await viewChange(decodeURIComponent(parts[1]));
-      else if (parts[0] === "doc") await viewDoc(decodeURIComponent(parts[1]), new URLSearchParams(qs || ""));
+      else if (parts[0] === "change") { app.innerHTML = skeletonPage(); await viewChange(decodeURIComponent(parts[1])); }
+      else if (parts[0] === "doc") { app.innerHTML = skeletonPage(); await viewDoc(decodeURIComponent(parts[1]), new URLSearchParams(qs || "")); }
       else if (parts[0] === "platform") viewPlatform(decodeURIComponent(parts[1] || ""));
       else if (parts[0] === "about") viewAbout();
       else if (parts[0] === "assistant") { setPanel(true); history.replaceState(null, "", "#/"); viewHome(); }
@@ -901,12 +923,15 @@
     }
     try { panelContext(parts, new URLSearchParams(qs || "")); } catch (e) { console.error(e); }
     animatePage();
+    const h1 = app.querySelector("h1");
+    if (h1 && route.count++) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
     window.scrollTo(0, 0);
   }
 
   (async () => {
     try {
       [state.index, state.changes] = await Promise.all([getJSON("data/index.json"), getJSON("data/changes.json")]);
+      state.changes.forEach(fillDefaults);
     } catch (e) {
       app.innerHTML = `<section class="shell page-head"><h1>Data not available</h1><p class="muted">${esc(e.message)}</p></section>`;
       return;

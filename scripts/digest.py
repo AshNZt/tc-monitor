@@ -52,6 +52,8 @@ def load(days=None, limit=None):
         changes = [c for c in changes if dt.datetime.fromisoformat(c["date"]) >= since]
     changes = changes[:limit] if limit else changes
     for c in changes:
+        for k in ("sections", "topics", "declared_dates"):
+            c.setdefault(k, [])
         full = json.loads((DATA / "changes" / f"{c['id']}.json").read_text(encoding="utf-8"))
         added = [clean(l) for h in full["hunks"] for t, l in h["lines"] if t == "+" and clean(l)]
         c["announce"] = next((a for a in added if ANNOUNCE_RE.search(a) and len(a) < 300), "")
