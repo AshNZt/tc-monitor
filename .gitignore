@@ -4,3 +4,4 @@ __pycache__/
 sites/
 node_modules/
 digest-preview.html
+.claude/
