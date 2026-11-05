@@ -104,6 +104,34 @@ def declared_dates(text):
     return found
 
 
+# Words whose change can alter meaning even in a one-word edit (kept as "text change")
+LEGAL_WORDS = set("""may must shall will should can cannot not no never only all any each every none
+required require requires prohibited prohibit allowed allow permitted permit may not unless except
+including excluding without within before after days months years minimum maximum free paid
+consent opt object delete sell share train training""".split())
+SMALL_EDIT_WORDS = 5   # at most this many words changed -> "small edit"
+
+
+def words_of(line):
+    t = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", normalize(line))
+    t = re.sub(r"https?://\S+", " ", t)
+    return re.findall(r"[^\W_]+", t.lower())
+
+
+def changed_words(hunks):
+    """Words removed and added across the hunks (multiset difference, so moved text counts zero)."""
+    from collections import Counter
+    rem, add = Counter(), Counter()
+    for h in hunks:
+        for t, l in h["lines"]:
+            if t == "-":
+                rem.update(words_of(l))
+            elif t == "+":
+                add.update(words_of(l))
+    gone, new = rem - add, add - rem
+    return sum(gone.values()) + sum(new.values()), set(gone) | set(new)
+
+
 def classify(subject, hunks):
     if subject.startswith("First record"):
         return "first"
@@ -246,9 +274,12 @@ def build():
                             continue
                     kind = classify(subject, hunks)
                     key = content_key(text)
+                    n_words, which = changed_words(hunks) if prev is not None else (0, set())
                     if kind == "substantive" and prev is not None:
-                        if key == content_key(prev):
+                        if key == content_key(prev) or n_words == 0:
                             kind = "formatting"
+                        elif n_words <= SMALL_EDIT_WORDS and not (which & LEGAL_WORDS):
+                            kind = "small-edit"
                         else:
                             for j in range(len(keys) - 2, -1, -1):
                                 k_date, k_key, k_idx = keys[j]
@@ -266,7 +297,7 @@ def build():
                     entry = {
                         "id": cid, "date": date, "platform": p["id"], "platform_name": p["name"],
                         "service": service, "doc_id": doc_id, "document": label, "type": kind,
-                        "added": add, "removed": rem, "sections": sections,
+                        "added": add, "removed": rem, "words_changed": n_words, "sections": sections,
                         "declared_dates": declared_dates(text),
                         "source_commit": f"{web}/commit/{sha}",
                     }

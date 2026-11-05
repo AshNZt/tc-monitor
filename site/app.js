@@ -9,12 +9,13 @@
     substantive: "Text change",
     first: "First record",
     formatting: "Links or formatting only",
+    "small-edit": "Small edit",
     reverted: "Reverted to earlier wording",
     temporary: "Short-lived wording",
     "date-only": "Date only",
     technical: "Technical",
   };
-  const MINOR = new Set(["formatting", "reverted", "temporary", "date-only", "technical"]);
+  const MINOR = new Set(["formatting", "small-edit", "reverted", "temporary", "date-only", "technical"]);
 
   // ---------- helpers ----------
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
@@ -343,7 +344,7 @@
           <div id="list"></div>
           <div class="feed-footer"><span id="count"></span><button type="button" id="more">Show more <span>↓</span></button></div>
         </article>
-        <p class="footnote">Minor changes are edits to links or formatting only, wording that was reverted or lasted only a few days, date-only edits and technical updates of the archive.</p>
+        <p class="footnote">Minor changes are edits to links or formatting only, small edits of at most 5 words that do not touch words like "may", "must" or "not", wording that was reverted or lasted only a few days, date-only edits and technical updates of the archive.</p>
       </section>`;
 
     const filtered = () => {
@@ -422,12 +423,15 @@
 
   // Make Markdown lines readable: links -> link text, drop escapes and emphasis marks
   const pretty = (l) => l
+    .replace(/\\([^\w\s])/g, "$1")
     .replace(/!?\[([^\]]*)\]\(([^)]*)\)/g, "$1")
+    .replace(/\[([^\]]+)\](?!\()/g, "$1")
     .replace(/<br\s*\/?>/gi, " / ")
-    .replace(/\\([\\_*\[\]().#|-])/g, "$1")
     .replace(/(\*\*|__)(.+?)\1/g, "$2")
     .replace(/(^|\s)[*_](\S.*?\S|\S)[*_](?=\s|[.,;:]|$)/g, "$1$2")
-    .replace(/⁠/g, "")
+    .replace(/\u2060/g, "")
+    .replace(/^\s*\|\s*|\s*\|\s*$/g, "")
+    .replace(/\s+\|\s+/g, " · ")
     .replace(/^\s*[*-]\s{1,4}/, "• ");
 
   // ----- paragraph view of a change -----
@@ -472,8 +476,12 @@
       const pairedDels = new Set(pairOf.values());
       // removed paragraphs first (they come first in the old text), then additions and modifications in new order
       dels.forEach((d, i) => { if (!pairedDels.has(i)) items.push({ kind: "removed", text: d }); });
+      const plain = (x) => pretty(x).replace(/\s+/g, " ").trim();
       adds.forEach((a, j) => {
-        if (pairOf.has(j)) items.push({ kind: "modified", before: dels[pairOf.get(j)], after: a });
+        if (pairOf.has(j)) {
+          const before = dels[pairOf.get(j)];
+          if (plain(before) !== plain(a)) items.push({ kind: "modified", before, after: a });
+        }
         else items.push({ kind: "added", text: a });
       });
     }
@@ -483,7 +491,6 @@
   function renderItem(it) {
     if (it.kind === "modified") {
       let a = pretty(it.before), b = pretty(it.after);
-      if (a === b) { a = it.before; b = it.after; }   // change only inside a link address
       const [x, y] = wordDiff(a, b);
       return `<div class="pi mod"><span class="pi-tag">Modified</span>
         <div class="pi-row"><span class="pi-label">Before</span><p>${x}</p></div>
@@ -530,7 +537,7 @@
         <h1>${esc(c.document)} ${typeTag(c.type)}</h1>
         <div class="meta-row">
           <span>Detected <b>${fmtDate(c.date, { weekday: "short", day: "numeric", month: "long", year: "numeric" })}</b></span>
-          ${c.type !== "first" ? `<span><b class="plus">+${c.added}</b> lines added, <b class="minus">−${c.removed}</b> removed</span>` : ""}
+          ${c.type !== "first" ? `<span>About <b>${c.words_changed ?? "?"}</b> words changed</span>` : ""}
           ${c.declared_dates.length ? `<span>Date stated in document: <b>${esc(c.declared_dates.join(", "))}</b></span>` : ""}
         </div>
         <div class="btn-row">
@@ -582,7 +589,7 @@
         <ol>
           <li><a href="https://opentermsarchive.org">Open Terms Archive</a> downloads each document several times a day and records every new version in a public archive.</li>
           <li>Once a week this site reads that archive and compares each version with the previous one.</li>
-          <li>Each change is classified. Only <b>text changes</b> are counted in the totals and charts. These are hidden by default as <b>minor changes</b>: edits to links or formatting only, wording that returns to a version seen in the previous 60 days, wording that disappears again within 30 days, edits to the "updated" date only, and technical updates of the archive itself.</li>
+          <li>Each change is classified. Only <b>text changes</b> are counted in the totals and charts. These are hidden by default as <b>minor changes</b>: edits to links or formatting only, <b>small edits</b> of at most 5 words (typos, contact details, names) unless they touch words that can change the meaning such as "may", "must", "not" or "consent", wording that returns to a version seen in the previous 60 days, wording that disappears again within 30 days, edits to the "updated" date only, and technical updates of the archive itself.</li>
         </ol>
         <h2>Reading the dates</h2>
         <p>The <b>detection date</b> is when the new wording was first recorded. Platforms sometimes announce changes in advance, or change the text without updating the date in the document, so the <b>date stated in the document</b> is shown separately.</p>
@@ -591,6 +598,36 @@
         <h2>Coverage</h2>
         <ul>${index.platforms.map((p) => `<li><b>${esc(p.name)}</b>: ${p.services.map(esc).join(", ")}, ${p.documents.length} documents. Source: ${p.sources.map((s) => `<a href="${esc(s)}">${esc(s.split("/").pop())}</a>`).join(", ")}</li>`).join("")}</ul>
         <p class="footnote">Data last rebuilt ${fmtDate(index.generated_at, { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}.</p>
+      </section>`;
+  }
+
+  // ---------- Assistant (placeholder until an API key is available) ----------
+  function viewAssistant() {
+    const samples = [
+      "What did Meta change about minors this year?",
+      "Cosa ha cambiato OpenAI nei suoi termini negli ultimi tre mesi?",
+      "Has Anthropic changed how it uses cookies?",
+      "Qu'est-ce qui a changé dans la politique de confidentialité de WhatsApp ?",
+    ];
+    app.innerHTML = `
+      <section class="shell page-head">
+        <p class="eyebrow">Assistant</p>
+        <h1>Ask about the changes</h1>
+        <p class="subtitle">An AI assistant that answers questions about the tracked changes, citing the exact amendments it relies on.</p>
+      </section>
+      <section class="shell">
+        <article class="card chat-box">
+          <div class="soon"><span class="soon-tag">Coming soon</span>The assistant is not active yet. It will be connected to an AI model through an API key.</div>
+          <div class="messages">
+            <div class="msg bot">Hello! Soon you will be able to ask me what changed in the terms of OpenAI, Anthropic, Google, Meta and Apple, in English, Italian or French. Every answer will link to the changes it is based on.</div>
+          </div>
+          <div class="samples">${samples.map((q) => `<button type="button" disabled>${esc(q)}</button>`).join("")}</div>
+          <form class="ask" onsubmit="return false">
+            <textarea rows="2" placeholder="The assistant is not available yet" disabled></textarea>
+            <button class="btn primary" type="submit" disabled>Ask</button>
+          </form>
+        </article>
+        <p class="footnote">In the meantime, use the <a class="text-link" href="#/changes">change log</a> filters to find changes by platform, document or section.</p>
       </section>`;
   }
 
@@ -609,6 +646,7 @@
       else if (parts[0] === "doc") await viewDoc(decodeURIComponent(parts[1]));
       else if (parts[0] === "platform") viewPlatform(decodeURIComponent(parts[1] || ""));
       else if (parts[0] === "about") viewAbout();
+      else if (parts[0] === "assistant") viewAssistant();
       else notFound();
     } catch (e) {
       console.error(e);
