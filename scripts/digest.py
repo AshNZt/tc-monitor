@@ -119,7 +119,7 @@ def email_html(changes, since, until):
   </td></tr>
   <tr><td style="padding:14px 6px;font-size:12px;line-height:1.5;color:#8b91a1">
     Changes detected by <a href="https://opentermsarchive.org" style="color:#8b91a1">Open Terms Archive</a>. Only text changes are listed; formatting, links and edits of up to 5 words are left out.
-    Built by {esc(SETTINGS.get('author', ''))}. To stop receiving this email, reply to it.
+    To stop receiving this email, reply to it.
   </td></tr>
 </table></td></tr></table></body></html>"""
 

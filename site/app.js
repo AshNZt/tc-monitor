@@ -820,6 +820,9 @@
         </ol>
         <h2>Topics</h2>
         <p>Each text change gets up to three topics (AI, Minors, Personal data, Advertising, Content moderation, Disputes &amp; liability, Payments &amp; pricing, Fraud &amp; security, IP &amp; licences, Law enforcement), assigned automatically from keywords in the changed text. They are a guide for browsing, not a legal classification: always read the change itself.</p>
+        <h2>Licence and use</h2>
+        <p>The TermRadar code and site are licensed under the <a href="https://polyformproject.org/licenses/noncommercial/1.0.0">PolyForm Noncommercial License 1.0.0</a>: they may be used, copied and adapted <b>only for non-commercial purposes</b>. Selling the tool, offering it as a paid service or using it in commercial products requires permission. The full text is in the LICENSE file of the source repository.</p>
+        <p>The archived documents are the terms of the respective platforms and come from Open Terms Archive; this licence does not cover them.</p>
         <h2>Reading the dates</h2>
         <p>The <b>detection date</b> is when the new wording was first recorded. Platforms sometimes announce changes in advance, or change the text without updating the date in the document, so the <b>date stated in the document</b> is shown separately.</p>
         <h2>Which version of the documents?</h2>
@@ -937,8 +940,6 @@
       return;
     }
     state.index.platforms.forEach((p) => { state.platforms[p.id] = p; });
-    const a = state.index.author;
-    if (a && a.name) { const el = document.getElementById("author-link"); el.textContent = a.name; if (a.url) el.href = a.url; }
     document.getElementById("aiFab").onclick = () => setPanel(!document.body.classList.contains("ai-open"));
     document.getElementById("aiClose").onclick = () => setPanel(false);
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") setPanel(false); });

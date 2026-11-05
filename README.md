@@ -2,8 +2,6 @@
 
 A free public website that tracks changes to the terms of service and policies of OpenAI, Anthropic, Google, Meta and Apple. For each change it shows when it was detected, what was added or removed, which sections and topics it concerns, and which updates have been announced but are not in force yet.
 
-Built by Alessandro Morigi.
-
 **Site:** https://ashnzt.github.io/tc-monitor/ · **RSS:** https://ashnzt.github.io/tc-monitor/feed.xml
 
 *Versione italiana in fondo.*
@@ -86,3 +84,9 @@ The repository belongs to Alessandro Morigi's GitHub account. To hand it over, a
 ## Versione italiana (in breve)
 
 Sito pubblico e gratuito che registra le modifiche ai termini di OpenAI, Anthropic, Google, Meta e Apple. I dati vengono da Open Terms Archive; ogni lunedì una GitHub Action li confronta, li verifica e ripubblica il sito. Per aggiungere una piattaforma basta modificare `sources.yaml`. Se qualcosa si rompe, il sito online resta com'era: leggere l'errore nel tab Actions e consultare la tabella *When something breaks*. Per passare il progetto a un collega: Settings › Collaborators oppure Settings › Transfer.
+
+---
+
+## Licence
+
+Code and site: [PolyForm Noncommercial License 1.0.0](LICENSE.md). Use, copying and modification are allowed **for non-commercial purposes only**. The archived documents belong to the respective platforms and come from Open Terms Archive; they are not covered by this licence.
