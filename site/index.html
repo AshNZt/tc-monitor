@@ -19,7 +19,6 @@
       <nav class="nav" aria-label="Primary navigation">
         <a href="#/" data-nav="home">Overview</a>
         <a href="#/changes" data-nav="changes">Changes</a>
-        <a href="#/assistant" data-nav="assistant">Assistant</a>
         <a href="#/about" data-nav="about">About</a>
       </nav>
     </div>
@@ -35,6 +34,27 @@
       <p>For research and monitoring purposes <span>·</span> Brussels, Belgium</p>
     </div>
   </footer>
+
+  <button class="ai-fab" id="aiFab" type="button" aria-controls="aiPanel" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z"/></svg>
+    <span>Ask AI</span>
+  </button>
+  <aside class="ai-panel" id="aiPanel" aria-label="AI assistant" aria-hidden="true">
+    <div class="ai-head">
+      <div><strong>AI assistant</strong><span id="aiContext">Overview</span></div>
+      <button type="button" class="ai-close" id="aiClose" aria-label="Close assistant">✕</button>
+    </div>
+    <div class="ai-soon"><span class="soon-tag">Coming soon</span>Not active yet. It will be connected to an AI model through an API key.</div>
+    <div class="ai-body">
+      <div class="ai-msg">Hi! Soon you will be able to ask me about the changes on this page. Every answer will link to the amendments it is based on. You can write in English, Italian or French.</div>
+      <p class="ai-label">Suggested for this page</p>
+      <div class="ai-suggest" id="aiSuggest"></div>
+    </div>
+    <form class="ai-ask" onsubmit="return false">
+      <textarea rows="2" placeholder="Ask a question about the changes…" disabled></textarea>
+      <button class="btn primary" type="submit" disabled aria-label="Send">↑</button>
+    </form>
+  </aside>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>

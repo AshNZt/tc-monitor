@@ -736,34 +736,42 @@
       </section>`;
   }
 
-  // ---------- Assistant (placeholder until an API key is available) ----------
-  function viewAssistant() {
-    const samples = [
-      "What did Meta change about minors this year?",
-      "Cosa ha cambiato OpenAI nei suoi termini negli ultimi tre mesi?",
-      "Has Anthropic changed how it uses cookies?",
-      "Qu'est-ce qui a changé dans la politique de confidentialité de WhatsApp ?",
+  // ---------- AI side panel (visual only until an API key is available) ----------
+  const panel = () => document.getElementById("aiPanel");
+  function setPanel(open) {
+    document.body.classList.toggle("ai-open", open);
+    panel().setAttribute("aria-hidden", String(!open));
+    document.getElementById("aiFab").setAttribute("aria-expanded", String(open));
+    try { sessionStorage.setItem("aiPanel", open ? "1" : ""); } catch {}
+  }
+  // Suggested questions depend on the page being viewed
+  function panelContext(parts, params) {
+    let ctx = "Overview", qs = [
+      "Which platforms changed their terms most in the last 3 months?",
+      "What changed about AI and data use across platforms this year?",
+      "Riassumi le modifiche più importanti di questo mese",
     ];
-    app.innerHTML = `
-      <section class="shell page-head">
-        <p class="eyebrow">Assistant</p>
-        <h1>Ask about the changes</h1>
-        <p class="subtitle">An AI assistant that answers questions about the tracked changes, citing the exact amendments it relies on.</p>
-      </section>
-      <section class="shell">
-        <article class="card chat-box">
-          <div class="soon"><span class="soon-tag">Coming soon</span>The assistant is not active yet. It will be connected to an AI model through an API key.</div>
-          <div class="messages">
-            <div class="msg bot">Hello! Soon you will be able to ask me what changed in the terms of OpenAI, Anthropic, Google, Meta and Apple, in English, Italian or French. Every answer will link to the changes it is based on.</div>
-          </div>
-          <div class="samples">${samples.map((q) => `<button type="button" disabled>${esc(q)}</button>`).join("")}</div>
-          <form class="ask" onsubmit="return false">
-            <textarea rows="2" placeholder="The assistant is not available yet" disabled></textarea>
-            <button class="btn primary" type="submit" disabled>Ask</button>
-          </form>
-        </article>
-        <p class="footnote">In the meantime, use the <a class="text-link" href="#/changes">change log</a> filters to find changes by platform, document or section.</p>
-      </section>`;
+    const pl = (id) => (state.platforms[id] || {}).name || id;
+    if (parts[0] === "platform" && parts[1]) {
+      const n = pl(parts[1]);
+      ctx = n; qs = [`Summarise ${n}'s most important changes this year`, `Which ${n} documents changed most recently, and how?`, `Cosa è cambiato per gli utenti europei di ${n}?`];
+    } else if (parts[0] === "change" && parts[1]) {
+      const c = state.changes.find((x) => x.id === decodeURIComponent(parts[1]));
+      ctx = c ? `${c.platform_name} · ${c.document}, ${fmtDate(c.date)}` : "This change";
+      qs = ["Explain this change in plain language", "What could this mean under the DSA or GDPR?", "Com'era questa sezione prima, e cosa cambia per gli utenti?"];
+    } else if (parts[0] === "doc" && parts[1]) {
+      const d = docById(decodeURIComponent(parts[1]));
+      ctx = d ? `${d.platform.name} · ${d.name}` : "This document";
+      qs = ["Summarise this document in 5 points", "What has changed in this document in the last year?", "Quali clausole riguardano i dati personali?"];
+    } else if (parts[0] === "changes") {
+      const p = params.get("platform");
+      ctx = p ? `Change log · ${pl(p)}` : "Change log";
+      qs = ["Which of these changes concern AI?", "Group these changes by topic", "Quali di queste modifiche riguardano i minori?"];
+    } else if (parts[0] === "about") {
+      ctx = "About"; qs = ["How does this tracker detect changes?", "Which documents are tracked for each platform?", "Cosa significa \"small edit\"?"];
+    }
+    document.getElementById("aiContext").textContent = ctx;
+    document.getElementById("aiSuggest").innerHTML = qs.map((q) => `<button type="button" disabled>${esc(q)}</button>`).join("");
   }
 
   function notFound() { app.innerHTML = `<section class="shell page-head"><h1>Not found</h1><p><a class="text-link" href="#/">Back to overview <span>→</span></a></p></section>`; }
@@ -781,12 +789,13 @@
       else if (parts[0] === "doc") await viewDoc(decodeURIComponent(parts[1]), new URLSearchParams(qs || ""));
       else if (parts[0] === "platform") viewPlatform(decodeURIComponent(parts[1] || ""));
       else if (parts[0] === "about") viewAbout();
-      else if (parts[0] === "assistant") viewAssistant();
+      else if (parts[0] === "assistant") { setPanel(true); history.replaceState(null, "", "#/"); viewHome(); }
       else notFound();
     } catch (e) {
       console.error(e);
       app.innerHTML = `<section class="shell page-head"><h1>Something went wrong</h1><p class="muted">${esc(e.message)}</p></section>`;
     }
+    try { panelContext(parts, new URLSearchParams(qs || "")); } catch (e) { console.error(e); }
     window.scrollTo(0, 0);
   }
 
@@ -800,6 +809,10 @@
     state.index.platforms.forEach((p) => { state.platforms[p.id] = p; });
     const a = state.index.author;
     if (a && a.name) { const el = document.getElementById("author-link"); el.textContent = a.name; if (a.url) el.href = a.url; }
+    document.getElementById("aiFab").onclick = () => setPanel(!document.body.classList.contains("ai-open"));
+    document.getElementById("aiClose").onclick = () => setPanel(false);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setPanel(false); });
+    try { if (sessionStorage.getItem("aiPanel")) setPanel(true); } catch {}
     window.addEventListener("hashchange", route);
     route();
   })();
