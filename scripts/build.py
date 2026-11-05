@@ -207,6 +207,72 @@ def lead_in(lines, j):
     return ""
 
 
+# ---- announced (upcoming) updates -------------------------------------------
+MONTH_NUM = {m: i for i, ms in enumerate([("jan", "january"), ("feb", "february"), ("mar", "march"), ("apr", "april"),
+             ("may",), ("jun", "june"), ("jul", "july"), ("aug", "august"), ("sep", "sept", "september"),
+             ("oct", "october"), ("nov", "november"), ("dec", "december")], 1) for m in ms}
+DATE_PATTERNS = [
+    re.compile(r"\b(?P<m>[A-Za-z]{3,9})\.? (?P<d>\d{1,2}),? (?P<y>20\d\d)\b"),      # November 20, 2026
+    re.compile(r"\b(?P<d>\d{1,2}) (?P<m>[A-Za-z]{3,9})\.?,? (?P<y>20\d\d)\b"),      # 20 November 2026
+    re.compile(r"\b(?P<y>20\d\d)-(?P<mm>\d\d)-(?P<d>\d\d)\b"),                     # 2026-11-20
+]
+UPCOMING_RE = re.compile(r"(will|shall) (go into|take|come into) effect|will (be|become) effective|will apply (from|on)|"
+                         r"(goes|go|come|comes) into effect on|effective (from|on|as of)|we('| a)re updating|we are making changes|"
+                         r"updated? .{0,40}(will|takes?) effect", re.I)
+
+
+def find_dates(text):
+    out = []
+    for rx in DATE_PATTERNS:
+        for m in rx.finditer(text):
+            try:
+                mon = int(m.group("mm")) if "mm" in m.groupdict() and m.group("mm") else MONTH_NUM.get(m.group("m").lower())
+                if mon:
+                    out.append(dt.date(int(m.group("y")), mon, int(m.group("d"))))
+            except (ValueError, IndexError, AttributeError):
+                pass
+    return out
+
+
+def plain(line):
+    t = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", normalize(line))
+    return re.sub(r"\s+", " ", re.sub(r"[*_`#>|\\]", " ", t)).strip()
+
+
+def announcements(text, changes, hunks_list, today):
+    """Sentences in the current text that announce an update with a concrete date in the future
+    (or that took effect in the last 30 days), with when they were first seen and any date moves."""
+    found = []
+    for raw in text.splitlines():
+        if not UPCOMING_RE.search(raw):
+            continue
+        dates = find_dates(plain(raw))
+        if not dates:
+            continue
+        eff = max(dates)
+        if eff < today - dt.timedelta(days=30):
+            continue
+        sentence = plain(raw)
+        link = re.search(r"\[([^\]]*)\]\((https?://[^)\s]+)\)", raw)
+        prefix = re.sub(r"\s+", " ", re.split(r"\d", sentence)[0])[:45]
+        first_seen, history = None, []
+        for c, hunks in zip(changes, hunks_list):
+            for h in hunks:
+                for t, l in h["lines"]:
+                    if t == "+" and prefix and prefix in plain(l):
+                        first_seen = first_seen or c["date"]
+                        d = find_dates(plain(l))
+                        if d and (not history or history[-1]["date"] != max(d).isoformat()):
+                            history.append({"date": max(d).isoformat(), "seen": c["date"], "change": c["id"]})
+        found.append({
+            "effective": eff.isoformat(), "sentence": sentence[:400],
+            "link": link.group(2) if link else None, "link_text": link.group(1) if link else None,
+            "first_seen": first_seen, "date_history": history,
+            "status": "upcoming" if eff >= today else "in_force",
+        })
+    return found
+
+
 def diff_hunks(old, new):
     a, b = normalize(old).splitlines(), normalize(new).splitlines()
     sec_b, sec_a = headings(b), headings(a)
@@ -252,7 +318,7 @@ def build():
     (OUT / "changes").mkdir(parents=True)
     (OUT / "current").mkdir(parents=True)
 
-    platforms, all_changes, status = [], [], []
+    platforms, all_changes, status, upcoming = [], [], [], []
 
     repos = {}
 
@@ -363,6 +429,9 @@ def build():
                 if prev is None:
                     continue
                 (OUT / "current" / f"{doc_id}.md").write_text(prev, encoding="utf-8")
+                for a in announcements(prev, changes, pending, now.date()):
+                    upcoming.append({**a, "platform": p["id"], "platform_name": p["name"],
+                                     "doc_id": doc_id, "document": label})
                 subst = [c for c in changes if c["type"] == "substantive"]
                 docs.append({
                     "id": doc_id, "name": label, "service": service,
@@ -394,6 +463,7 @@ def build():
         "generated_at": now.isoformat(timespec="seconds"),
         "author": {"name": cfg["settings"].get("author", ""), "url": cfg["settings"].get("author_url", "")},
         "platforms": platforms, "status": status,
+        "upcoming": sorted(upcoming, key=lambda a: a["effective"]),
     }, ensure_ascii=False, indent=1), encoding="utf-8")
     (OUT / "changes.json").write_text(json.dumps(all_changes, ensure_ascii=False), encoding="utf-8")
 

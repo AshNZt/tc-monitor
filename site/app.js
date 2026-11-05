@@ -120,6 +120,37 @@
   // shades of one platform colour, one per service
   const shade = (color, i, n) => n < 2 ? color : `color-mix(in srgb, ${color}, ${i % 2 ? "#ffffff" : "#000000"} ${Math.round(12 + 50 * i / n)}%)`;
 
+  // ---------- Announced updates (from banners in the current documents) ----------
+  function upcomingHTML(list, { title = true } = {}) {
+    if (!list.length) return "";
+    const today = new Date(new Date().toDateString());
+    const cards = list.map((a) => {
+      const p = P(a.platform), eff = new Date(a.effective);
+      const days = Math.round((eff - today) / 864e5);
+      const when = days > 1 ? `in ${days} days` : days === 1 ? "tomorrow" : days === 0 ? "today" : `${-days} days ago`;
+      const moves = a.date_history.length > 1
+        ? `<div class="up-moved">Date moved ${a.date_history.length - 1} time${a.date_history.length > 2 ? "s" : ""}: ${a.date_history.map((h) => fmtDate(h.date)).join(" → ")}</div>` : "";
+      const first = a.date_history[0];
+      return `<article class="up-card" style="--platform:${p.color}">
+        <div class="up-date"><span>${a.status === "upcoming" ? "Takes effect" : "In force since"}</span><strong>${fmtDate(a.effective)}</strong><em>${when}</em></div>
+        <div class="up-main">
+          <div class="up-doc"><i class="platform-dot" style="--platform:${p.color}"></i><b>${esc(p.name)}</b> · <a href="#/doc/${enc(a.doc_id)}">${esc(a.document)}</a></div>
+          <p class="up-sentence">“${esc(a.sentence)}”</p>
+          ${moves}
+          <div class="up-actions">
+            ${a.link ? `<a class="btn" href="${esc(a.link)}" target="_blank" rel="noopener">Read the announced version ↗</a>` : ""}
+            ${first ? `<a class="btn" href="#/change/${enc(first.change)}">Announcement, ${fmtDate(first.seen)}</a>` : ""}
+          </div>
+        </div>
+      </article>`;
+    }).join("");
+    return `<section class="shell section-block" id="upcoming">
+      ${title ? `<div class="section-heading compact"><div><p class="eyebrow">Announced</p><h2>Upcoming changes</h2><p>Updates a platform has announced in its documents but that are not in force yet.</p></div></div>` : ""}
+      <div class="up-list">${cards}</div>
+      <p class="footnote">Detected from the notices platforms publish at the top of their documents. The text of the new version is usually only on the platform's preview page, which is not archived: open it with "Read the announced version".</p>
+    </section>`;
+  }
+
   // ---------- Overview ----------
   function viewHome() {
     const { index, changes } = state;
@@ -178,6 +209,8 @@
         <article class="summary-card latest-card"><div class="summary-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 4.5h12v15H6z"/><path d="M9 8h6M9 11h6M9 14h4"/></svg></div>
           <div><p>Latest change</p>${latest ? `<a href="#/change/${enc(latest.id)}"><strong class="date-value">${fmtDate(latest.date)}</strong><span>${esc(latest.platform_name)} · ${esc(latest.document)}</span></a>` : "<strong>–</strong>"}</div></article>
       </section>
+
+      ${upcomingHTML(index.upcoming || [])}
 
       <section class="shell section-block" id="activity">
         <div class="section-heading">
@@ -280,6 +313,8 @@
         <article class="summary-card"><div><p>Latest change</p>${subst[0] ? `<a href="#/change/${enc(subst[0].id)}"><strong class="date-value">${fmtDate(subst[0].date)}</strong><span>${esc(subst[0].document)}</span></a>` : "<strong>–</strong>"}</div></article>
         <article class="summary-card"><div><p>Tracked since</p><strong class="date-value">${fmtDate(since)}</strong><span>${subst.length} text changes in total</span></div></article>
       </section>
+
+      ${upcomingHTML((state.index.upcoming || []).filter((a) => a.platform === id))}
 
       <section class="shell section-block">
         <div class="section-heading">
