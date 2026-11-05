@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-05T10:56:21+00:00",
+ "generated_at": "2026-11-05T11:12:22+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -847,6 +847,48 @@
    "platform_name": "Meta",
    "doc_id": "meta--facebook--commercial-terms",
    "document": "Facebook Commercial Terms"
+  }
+ ],
+ "topics": [
+  {
+   "id": "ai",
+   "label": "AI"
+  },
+  {
+   "id": "minors",
+   "label": "Minors"
+  },
+  {
+   "id": "data",
+   "label": "Personal data"
+  },
+  {
+   "id": "ads",
+   "label": "Advertising"
+  },
+  {
+   "id": "moderation",
+   "label": "Content moderation"
+  },
+  {
+   "id": "disputes",
+   "label": "Disputes & liability"
+  },
+  {
+   "id": "payments",
+   "label": "Payments & pricing"
+  },
+  {
+   "id": "security",
+   "label": "Fraud & security"
+  },
+  {
+   "id": "ip",
+   "label": "IP & licences"
+  },
+  {
+   "id": "government",
+   "label": "Law enforcement"
   }
  ]
 }
