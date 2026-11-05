@@ -736,6 +736,33 @@
       </section>`;
   }
 
+  // ---------- Motion: entrance animations after each page render ----------
+  const reduceMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function animatePage() {
+    if (reduceMotion()) return;
+    app.classList.remove("page-enter");
+    void app.offsetWidth;            // restart the CSS animation
+    app.classList.add("page-enter");
+    // stagger: page sections, cards, rows and chart bars
+    [...app.children].forEach((el, i) => el.style.setProperty("--i", i));
+    app.querySelectorAll(".summary-card, .platform-card").forEach((el, i) => el.style.setProperty("--j", i));
+    app.querySelectorAll(".feed-row, .hunk, .side-row, .doc-table tbody tr").forEach((el, i) => el.style.setProperty("--j", Math.min(i, 14)));
+    app.querySelectorAll(".bar-column").forEach((el, i) => el.style.setProperty("--d", i));
+    // numbers count up
+    app.querySelectorAll(".summary-card strong, .metric strong, .chart-meta strong").forEach((el) => {
+      const target = Number(el.textContent.trim());
+      if (!Number.isFinite(target) || target <= 0 || !/^\d+$/.test(el.textContent.trim())) return;
+      const t0 = performance.now(), dur = 700;
+      const step = (t) => {
+        const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = Math.round(target * e);
+        if (k < 1) requestAnimationFrame(step);
+      };
+      el.textContent = "0";
+      requestAnimationFrame(step);
+    });
+  }
+
   // ---------- AI side panel (visual only until an API key is available) ----------
   const panel = () => document.getElementById("aiPanel");
   function setPanel(open) {
@@ -796,6 +823,7 @@
       app.innerHTML = `<section class="shell page-head"><h1>Something went wrong</h1><p class="muted">${esc(e.message)}</p></section>`;
     }
     try { panelContext(parts, new URLSearchParams(qs || "")); } catch (e) { console.error(e); }
+    animatePage();
     window.scrollTo(0, 0);
   }
 
