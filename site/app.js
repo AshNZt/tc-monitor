@@ -39,7 +39,8 @@
   };
   const typeTag = (t) => t === "substantive" ? "" : `<span class="type-tag ${t}">${TYPE_LABEL[t] || t}</span>`;
   const diffBadge = (c, cls = "diff feed-diff") => c.type === "first" ? `<span class="${cls}"><span class="muted">new</span></span>` :
-    `<span class="${cls}"><span class="plus">+${c.added}</span><span class="minus">−${c.removed} lines</span></span>`;
+    (c.words_changed != null ? `<span class="${cls}"><span class="words">${c.words_changed} word${c.words_changed === 1 ? "" : "s"}</span></span>`
+      : `<span class="${cls}"><span class="plus">+${c.added}</span><span class="minus">−${c.removed} lines</span></span>`);
   const lastMonths = (n) => {
     const now = new Date(), keys = [];
     for (let i = n - 1; i >= 0; i--) {
@@ -435,10 +436,9 @@
     .replace(/^\s*[*-]\s{1,4}/, "• ");
 
   // ----- paragraph view of a change -----
-  // A line is only "formatting" (Markdown underline, rule, empty bullet)
   const isNoise = (l) => !l.trim() || /^\s*([-=_*]\s*){3,}$/.test(l) || /^\s*[*-]\s*$/.test(l);
+  const isBullet = (l) => /^\s*([*+-]|\d+[.)])\s+/.test(l) || /^\s{4,}\S/.test(l);
   const words = (l) => (l.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []);
-  // Dice similarity on words: 1 = same words, 0 = nothing in common
   function similarity(a, b) {
     const wa = words(a), wb = words(b);
     if (!wa.length || !wb.length) return 0;
@@ -449,59 +449,152 @@
     return 2 * common / (wa.length + wb.length);
   }
 
-  // Turns a hunk into an ordered list of items: modified / added / removed paragraphs
+  // Word-level diff as one merged token list: [{t: "eq"|"del"|"ins", s}]
+  function mergeTokens(a, b) {
+    const ta = a.match(/\s+|[^\s]+/g) || [], tb = b.match(/\s+|[^\s]+/g) || [];
+    if (ta.length * tb.length > 400000) return [{ t: "del", s: a }, { t: "eq", s: " " }, { t: "ins", s: b }];
+    const n = ta.length, m = tb.length;
+    const dp = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+    for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--)
+      dp[i][j] = ta[i] === tb[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    const out = [];
+    const push = (t, x) => { const last = out[out.length - 1]; if (last && last.t === t) last.s += x; else out.push({ t, s: x }); };
+    let i = 0, j = 0;
+    while (i < n && j < m) {
+      if (ta[i] === tb[j]) { push("eq", ta[i]); i++; j++; }
+      else if (dp[i + 1][j] >= dp[i][j + 1]) push("del", ta[i++]);
+      else push("ins", tb[j++]);
+    }
+    while (i < n) push("del", ta[i++]);
+    while (j < m) push("ins", tb[j++]);
+    return cleanup(out);
+  }
+
+  // Semantic cleanup: tiny unchanged bits (a space or one short word) between two edits
+  // are folded into the edit, and each edit run is shown as "all removed, then all added".
+  // "Spark AR" -> "Meta Spark" becomes ~~Spark AR~~ Meta Spark instead of a mosaic.
+  function cleanup(tokens) {
+    const tiny = (x) => x.t === "eq" && (x.s.trim() === "" || (words(x.s).length <= 1 && x.s.trim().length <= 6));
+    let changed = true, toks = tokens;
+    while (changed) {
+      changed = false;
+      const out = [];
+      for (let i = 0; i < toks.length; i++) {
+        const x = toks[i];
+        if (tiny(x) && out.length && out[out.length - 1].t !== "eq" && toks[i + 1] && toks[i + 1].t !== "eq") {
+          out.push({ t: "del", s: x.s }, { t: "ins", s: x.s }); changed = true;
+        } else out.push(x);
+      }
+      // regroup each run of edits: deletions first, then insertions
+      toks = [];
+      for (let i = 0; i < out.length;) {
+        if (out[i].t === "eq") { toks.push(out[i++]); continue; }
+        let del = "", ins = "";
+        while (i < out.length && out[i].t !== "eq") { if (out[i].t === "del") del += out[i].s; else ins += out[i].s; i++; }
+        if (del) toks.push({ t: "del", s: del });
+        if (ins) toks.push({ t: "ins", s: ins });
+      }
+      if (!changed) break;
+    }
+    return toks;
+  }
+  const joinTokens = (toks) => toks.map((t, i) => tokHTML(t) + (t.t === "del" && toks[i + 1] && toks[i + 1].t === "ins" ? " " : "")).join("");
+  const tokHTML = (tok) => tok.t === "eq" ? esc(tok.s) : tok.t === "del" ? `<del>${esc(tok.s)}</del>` : `<ins>${esc(tok.s)}</ins>`;
+
+  // Keep only the sentences that contain an edit; returns {short, full, trimmed}
+  function trimToChanges(tokens) {
+    const full = joinTokens(tokens);
+    const sentences = [[]];
+    for (const tok of tokens) {
+      if (tok.t !== "eq") { sentences[sentences.length - 1].push(tok); continue; }
+      // split equal text after sentence-ending punctuation
+      const parts = tok.s.split(/(?<=[.!?;:]["”’)]?)(\s+)/);
+      parts.forEach((p, k) => {
+        if (!p) return;
+        sentences[sentences.length - 1].push({ t: "eq", s: p });
+        if (k % 2 === 1) sentences.push([]);
+      });
+    }
+    const keep = sentences.map((snt) => snt.some((x) => x.t !== "eq"));
+    if (keep.every(Boolean) || full.length < 280) return { short: full, full, trimmed: false };
+    let html = "", gap = false;
+    sentences.forEach((snt, k) => {
+      if (keep[k]) { html += (gap ? "… " : "") + joinTokens(snt); gap = false; }
+      else gap = true;
+    });
+    if (gap) html = html.trimEnd() + " …";
+    return { short: html, full, trimmed: true };
+  }
+
   function hunkItems(h) {
     const items = [], lines = h.lines;
+    let lead = h.lead || "";
+    const setLead = (l) => { if (!isNoise(l) && !isBullet(l) && !/^#/.test(l)) lead = l.trim(); };
     for (let k = 0; k < lines.length;) {
-      if (lines[k][0] === " ") { k++; continue; }
+      if (lines[k][0] === " ") { setLead(lines[k][1]); k++; continue; }
       const dels = [], adds = [];
       while (k < lines.length && lines[k][0] !== " ") {
         const [t, l] = lines[k++];
         if (isNoise(l)) continue;
         (t === "-" ? dels : adds).push(l);
       }
-      // pair each removed paragraph with its most similar added one (if similar enough)
       const used = new Set(), pairOf = new Map();
       dels.forEach((d, i) => {
         let best = -1, bestS = 0;
         adds.forEach((a, j) => {
           if (used.has(j)) return;
           const sc = similarity(pretty(d), pretty(a));
-          // short lines (dates, titles) can share few words and still be the same paragraph
           const min = Math.max(words(d).length, words(a).length) <= 8 ? 0.25 : 0.5;
-          if (sc >= min && sc >= bestS - 0.25 && (best < 0 || sc > bestS)) { best = j; bestS = sc; }
+          if (sc >= min && (best < 0 || sc > bestS)) { best = j; bestS = sc; }
         });
         if (best >= 0) { used.add(best); pairOf.set(best, i); }
       });
       const pairedDels = new Set(pairOf.values());
-      // removed paragraphs first (they come first in the old text), then additions and modifications in new order
-      dels.forEach((d, i) => { if (!pairedDels.has(i)) items.push({ kind: "removed", text: d }); });
       const plain = (x) => pretty(x).replace(/\s+/g, " ").trim();
+      const withLead = (it, raw) => {
+        const prev = items[items.length - 1];
+        const prevText = prev ? plain(prev.kind === "modified" ? prev.after : prev.text) : "";
+        if (isBullet(raw) && lead && plain(lead) !== plain(raw) && plain(lead) !== prevText && !(prev && prev.lead && plain(prev.lead) === plain(lead))) it.lead = pretty(lead);
+        return it;
+      };
+      dels.forEach((d, i) => { if (!pairedDels.has(i)) items.push(withLead({ kind: "removed", text: d }, d)); });
       adds.forEach((a, j) => {
         if (pairOf.has(j)) {
           const before = dels[pairOf.get(j)];
-          if (plain(before) !== plain(a)) items.push({ kind: "modified", before, after: a });
-        }
-        else items.push({ kind: "added", text: a });
+          if (plain(before) !== plain(a)) items.push(withLead({ kind: "modified", before, after: a }, a));
+        } else items.push(withLead({ kind: "added", text: a }, a));
+        setLead(a);
       });
     }
     return items;
   }
 
   function renderItem(it) {
+    const lead = it.lead ? `<div class="pi-lead">${esc(it.lead.length > 220 ? it.lead.slice(0, 220) + "…" : it.lead)}</div>` : "";
+    const longText = (txt) => {
+      const t = esc(pretty(txt));
+      return t.length > 600 ? `<p class="clamp">${t}</p><button type="button" class="pi-more" data-more>Show full paragraph</button>` : `<p>${t}</p>`;
+    };
     if (it.kind === "modified") {
-      let a = pretty(it.before), b = pretty(it.after);
+      const a = pretty(it.before), b = pretty(it.after);
+      const tokens = mergeTokens(a, b);
+      const changed = tokens.filter((x) => x.t !== "eq").reduce((n, x) => n + words(x.s).length, 0);
+      const small = changed <= 15 || similarity(a, b) >= 0.75;
+      if (small) {
+        const { short, full, trimmed } = trimToChanges(tokens);
+        return `<div class="pi mod" data-kind="modified">${lead}<p class="inline-diff" data-full="${esc(full)}">${short}</p>${trimmed ? `<button type="button" class="pi-more" data-full-toggle>Show full paragraph</button>` : ""}</div>`;
+      }
       const [x, y] = wordDiff(a, b);
-      return `<div class="pi mod"><span class="pi-tag">Modified</span>
+      return `<div class="pi mod" data-kind="modified">${lead}
         <div class="pi-row"><span class="pi-label">Before</span><p>${x}</p></div>
         <div class="pi-row"><span class="pi-label">After</span><p>${y}</p></div></div>`;
     }
-    if (it.kind === "added") return `<div class="pi add"><span class="pi-tag">Added</span><p>${esc(pretty(it.text))}</p></div>`;
-    return `<details class="pi rem"><summary><span class="pi-tag">Removed</span><span class="pi-preview">${esc(pretty(it.text).slice(0, 140))}${pretty(it.text).length > 140 ? "…" : ""}</span></summary><p>${esc(pretty(it.text))}</p></details>`;
+    if (it.kind === "added") return `<div class="pi add" data-kind="added">${lead}${longText(it.text)}</div>`;
+    const t = pretty(it.text);
+    return `<details class="pi rem" data-kind="removed"><summary><span class="rem-label">Removed</span><span class="pi-preview">${esc(t.slice(0, 140))}${t.length > 140 ? "…" : ""}</span></summary>${lead}<p>${esc(t)}</p></details>`;
   }
 
-  // Groups consecutive hunks of the same section into one card
-  function renderChangeBody(hunks) {
+  function renderChangeBody(hunks, docId) {
     const groups = [];
     for (const h of hunks) {
       const items = hunkItems(h);
@@ -512,11 +605,43 @@
     }
     if (!groups.length) return `<div class="card pad muted">Only formatting changed in this version.</div>`;
     const n = (k) => groups.reduce((a, g) => a + g.items.filter((i) => i.kind === k).length, 0);
-    const summary = [["modified", "modified"], ["added", "added"], ["removed", "removed"]]
-      .map(([k, label]) => n(k) ? `<span class="sum ${k}"><b>${n(k)}</b> ${label}</span>` : "").join("");
-    return `<div class="change-summary">${summary}<span class="muted small">paragraphs in ${groups.length} section${groups.length > 1 ? "s" : ""}</span></div>` +
-      groups.map((g) => `<div class="hunk"><div class="hunk-head"><span>${g.section ? `Section: <b>${esc(g.section)}</b>` : "<b>Start of document</b>"}</span><span>${g.items.length} change${g.items.length > 1 ? "s" : ""}</span></div>
-        <div class="pi-list">${g.items.map(renderItem).join("")}</div></div>`).join("");
+    const pills = [["modified", "Modified"], ["added", "Added"], ["removed", "Removed"]]
+      .filter(([k]) => n(k)).map(([k, label]) => `<button type="button" class="sum ${k}" data-kind-filter="${k}" aria-pressed="false"><i></i>${label} <b>${n(k)}</b></button>`).join("");
+    const findLink = (g) => {
+      const it = g.items.find((i) => i.kind !== "removed");
+      if (!it) return "";
+      const snippet = pretty(it.kind === "modified" ? it.after : it.text).replace(/\s+/g, " ").trim().slice(0, 80);
+      return `<a class="find-link" href="#/doc/${enc(docId)}?find=${enc(snippet)}">View in document →</a>`;
+    };
+    return `<div class="change-summary">${pills}<span class="muted small">in ${groups.length} section${groups.length > 1 ? "s" : ""} · click to filter</span></div>
+      <div class="change-body">` +
+      groups.map((g) => `<div class="hunk"><div class="hunk-head"><span>${g.section ? `<b>${esc(g.section)}</b>` : "<b>Start of document</b>"}</span>${findLink(g)}</div>
+        <div class="pi-list">${g.items.map(renderItem).join("")}</div></div>`).join("") + `</div>`;
+  }
+
+  // interactions inside a change page (event delegation)
+  function wireChangeBody() {
+    const body = app.querySelector(".change-body");
+    if (!body) return;
+    app.querySelectorAll("[data-kind-filter]").forEach((btn) => btn.addEventListener("click", () => {
+      const on = btn.getAttribute("aria-pressed") !== "true";
+      app.querySelectorAll("[data-kind-filter]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+      btn.setAttribute("aria-pressed", String(on));
+      body.dataset.only = on ? btn.dataset.kindFilter : "";
+      body.querySelectorAll(".hunk").forEach((h) => {
+        h.hidden = on && !h.querySelector(`[data-kind="${btn.dataset.kindFilter}"]`);
+      });
+    }));
+    body.addEventListener("click", (e) => {
+      const ft = e.target.closest("[data-full-toggle]");
+      if (ft) {
+        const p = ft.previousElementSibling;
+        if (!p.dataset.short) { p.dataset.short = p.innerHTML; p.innerHTML = p.dataset.full; ft.textContent = "Show only the changed sentences"; }
+        else { p.innerHTML = p.dataset.short; delete p.dataset.short; ft.textContent = "Show full paragraph"; }
+      }
+      const more = e.target.closest("[data-more]");
+      if (more) { const p = more.previousElementSibling; p.classList.toggle("clamp"); more.textContent = p.classList.contains("clamp") ? "Show full paragraph" : "Show less"; }
+    });
   }
 
   async function viewChange(id) {
@@ -528,7 +653,7 @@
     const older = pos >= 0 ? docChanges[pos + 1] : null;
     const body = c.type === "first"
       ? `<div class="card pad">This is the first version recorded for this document. <a class="text-link" href="#/doc/${enc(c.doc_id)}">Read the current text <span>→</span></a></div>`
-      : renderChangeBody(c.hunks);
+      : renderChangeBody(c.hunks, c.doc_id);
 
     app.innerHTML = `
       <section class="shell page-head">
@@ -549,10 +674,11 @@
         ${body}
         <p class="footnote">"Detected" is when Open Terms Archive first recorded the new wording. The platform's own effective date can differ, see the date stated in the document.</p>
       </section>`;
+    wireChangeBody();
   }
 
   // ---------- Document ----------
-  async function viewDoc(id) {
+  async function viewDoc(id, params = new URLSearchParams()) {
     const d = docById(id);
     if (!d) return notFound();
     const md = await (await fetch(`data/current/${enc(id)}.md`)).text();
@@ -576,6 +702,15 @@
           ${list.map((c) => `<a class="side-row" href="#/change/${enc(c.id)}"><span class="d">${fmtDate(c.date)}${typeTag(c.type)}</span>${diffBadge(c, "diff")}<span class="s">${esc(c.sections.join(" · "))}</span></a>`).join("")}
         </aside>
       </section>`;
+    const find = params.get("find");
+    if (find) {
+      const norm = (t) => t.replace(/\s+/g, " ").trim().toLowerCase();
+      const needle = norm(find).slice(0, 50);
+      const el = [...app.querySelectorAll(".doc-text p, .doc-text li, .doc-text td, .doc-text h1, .doc-text h2, .doc-text h3, .doc-text h4")]
+        .find((x) => norm(x.textContent).includes(needle));
+      if (el) { el.classList.add("hl"); setTimeout(() => el.scrollIntoView({ block: "center" }), 50); }
+      else app.querySelector(".doc-text").insertAdjacentHTML("afterbegin", `<p class="notice">This wording is no longer in the current version of the document.</p>`);
+    }
   }
 
   // ---------- About ----------
@@ -643,7 +778,7 @@
       if (!parts.length) viewHome();
       else if (parts[0] === "changes") viewChanges(new URLSearchParams(qs || ""));
       else if (parts[0] === "change") await viewChange(decodeURIComponent(parts[1]));
-      else if (parts[0] === "doc") await viewDoc(decodeURIComponent(parts[1]));
+      else if (parts[0] === "doc") await viewDoc(decodeURIComponent(parts[1]), new URLSearchParams(qs || ""));
       else if (parts[0] === "platform") viewPlatform(decodeURIComponent(parts[1] || ""));
       else if (parts[0] === "about") viewAbout();
       else if (parts[0] === "assistant") viewAssistant();

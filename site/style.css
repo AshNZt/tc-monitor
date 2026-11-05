@@ -335,3 +335,31 @@ a.platform-title:hover h3 { text-decoration: underline; }
 .btn.primary { color: #fff; background: var(--navy); border-color: var(--navy); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 @media (max-width: 560px) { .chat-box .msg { max-width: 100%; } .chat-box .ask { flex-direction: column; } }
+
+/* ===== Readability pass for the change view ===== */
+.change-summary .sum { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; cursor: pointer; font: inherit; font-size: 13px; }
+.change-summary .sum i { width: 8px; height: 8px; border-radius: 2px; }
+.sum.modified i { background: #e0a526; } .sum.added i { background: var(--positive); } .sum.removed i { background: #d9a3aa; }
+.sum[aria-pressed="true"] { border-color: currentColor; box-shadow: 0 0 0 2px rgba(27,37,86,.08); }
+.hunk-head { align-items: center; }
+.hunk-head b { font-size: 14px; }
+.find-link { color: #2f6f99; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.find-link:hover { text-decoration: underline; }
+.pi { padding: 14px 22px; }
+.pi p { max-width: 82ch; }
+.pi-tag { display: none; }
+.pi-lead { max-width: 82ch; margin-bottom: 6px; padding-left: 10px; color: #8b91a1; font-size: 13px; line-height: 1.5; border-left: 2px solid #e3e6ee; }
+.inline-diff del { text-decoration: line-through; text-decoration-color: var(--negative); color: var(--negative); background: #fcf0f1; border-radius: 2px; padding: 0 1px; }
+.inline-diff ins { text-decoration: none; color: #135c2c; background: #d4f0de; border-radius: 2px; padding: 0 1px; }
+.pi-more { margin-top: 6px; padding: 0; color: #2f6f99; background: none; border: 0; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.pi-more:hover { text-decoration: underline; }
+.clamp { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.pi.rem summary { align-items: center; }
+.rem-label { flex: 0 0 auto; color: var(--negative); font-size: 12px; font-weight: 700; }
+.pi.rem[open] p { text-decoration: none; color: #8a4b53; background: #fdf6f7; padding: 8px 10px; border-radius: 6px; }
+.change-body[data-only="modified"] .pi:not(.mod),
+.change-body[data-only="added"] .pi:not(.add),
+.change-body[data-only="removed"] .pi:not(.rem) { display: none; }
+.doc-text .hl { background: #fff4c2; box-shadow: 0 0 0 6px #fff4c2; border-radius: 3px; transition: background 1s; }
+.doc-text .notice { margin-top: 18px; }
+.diff .words, .feed-diff .words { color: #4b5168; font-weight: 600; }

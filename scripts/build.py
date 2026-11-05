@@ -177,6 +177,22 @@ def days_between(a, b):
     return abs((dt.datetime.fromisoformat(b) - dt.datetime.fromisoformat(a)).days)
 
 
+BULLET_RE = re.compile(r"^\s*([*+-]|\d+[.)])\s+")
+RULE_RE = re.compile(r"^\s*([-=_*]\s*){3,}$")
+
+
+def lead_in(lines, j):
+    """Nearest paragraph above line j that is not a list item: the sentence that introduces a list."""
+    for k in range(j - 1, max(-1, j - 120), -1):
+        l = lines[k]
+        if not l.strip() or RULE_RE.match(l) or BULLET_RE.match(l) or l.startswith("    "):
+            continue
+        if l.startswith("#") or (k + 1 < len(lines) and RULE_RE.match(lines[k + 1])):
+            return ""          # reached a heading: no lead-in sentence
+        return l.strip()[:400]
+    return ""
+
+
 def diff_hunks(old, new):
     a, b = normalize(old).splitlines(), normalize(new).splitlines()
     sec_b, sec_a = headings(b), headings(a)
@@ -205,6 +221,7 @@ def diff_hunks(old, new):
             "section": clean_heading(section),
             "old_start": group[0][1] + 1,
             "new_start": group[0][3] + 1,
+            "lead": lead_in(b, group[0][3]),
             "lines": lines,
         })
     return hunks, added, removed
