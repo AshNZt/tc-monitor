@@ -1,82 +1,88 @@
-# T&C Monitor
+# TermRadar
 
-A free public website that tracks changes to the terms of service and policies of major digital platforms. For each change it shows the date it was detected, which sections were affected and the exact wording added or removed.
+A free public website that tracks changes to the terms of service and policies of OpenAI, Anthropic, Google, Meta and Apple. For each change it shows when it was detected, what was added or removed, which sections and topics it concerns, and which updates have been announced but are not in force yet.
 
 Built by Alessandro Morigi.
 
-*Versione italiana più sotto.*
+**Site:** https://ashnzt.github.io/tc-monitor/ · **RSS:** https://ashnzt.github.io/tc-monitor/feed.xml
+
+*Versione italiana in fondo.*
 
 ## How it works
 
 ```
-Open Terms Archive  ──►  scripts/build.py  ──►  site/data/*.json  ──►  dashboard (site/)
-(archives documents       (weekly, GitHub        (changes, diffs,        (GitHub Pages)
- several times a day)      Actions)               current texts)
+Open Terms Archive ──► scripts/build.py ──► scripts/check.py ──► site/ on GitHub Pages
+(archives documents     (weekly: compare      (stops publishing      (static site,
+ several times a day)    versions, classify)    if data is broken)     no server)
 ```
 
-1. [Open Terms Archive](https://opentermsarchive.org) downloads each document several times a day and stores every version in public git repositories.
-2. Every Monday a GitHub Action runs `scripts/build.py`. It reads the version history, compares each version with the previous one, filters noise (rotating IDs in links) and labels each change: *text change*, *date only*, *technical* or *first record*.
-3. The results are committed to `site/data/` and the site is republished on GitHub Pages.
-4. If there are new text changes, the Action opens a GitHub Issue. Everyone who watches the repository gets an email.
+1. [Open Terms Archive](https://opentermsarchive.org) downloads each document several times a day and keeps every version in public git repositories.
+2. Every Monday at 06:17 UTC the GitHub Action `.github/workflows/update.yml` runs `scripts/build.py`, which reads those versions, compares each with the previous one and writes the data the site reads into `site/data/`.
+3. `scripts/check.py` verifies the data. If it fails, nothing is published and the site stays as it was.
+4. The site is published on GitHub Pages. New text changes open a GitHub Issue (email to anyone watching the repository).
 
 No server, no database, no cost.
 
-## Setup (once)
+## How changes are classified
 
-1. Create a **public** repository on GitHub, for example `tc-monitor`, and upload these files.
-2. In the repository: **Settings › Pages › Build and deployment › Source: GitHub Actions**.
-3. In `sources.yaml`, set `author_url` to your GitHub profile.
-4. Go to **Actions › Update T&C data › Run workflow**. After about a minute the site is live at `https://<username>.github.io/tc-monitor/`.
-5. To receive emails: click **Watch › Custom › Issues** on the repository page. Colleagues can do the same.
+Only **text changes** are counted and shown by default. These are hidden as *minor* but remain available with "Include minor changes":
 
-## Platforms and adding new ones
+| Type | Meaning |
+|---|---|
+| Links, formatting or page elements | No words changed, or only menus, survey banners, help links, logos |
+| Source page error | The source showed an empty or error page (and the return to normal) |
+| Small edit | 5 words or fewer, unless they include words like may, must, not, consent, or announce an effective date |
+| Date only | Only dates or numbers changed |
+| Reverted / Short-lived | Edits up to 50 words that flip back within weeks. Larger flip-flops stay visible with a warning |
+| Technical | Changes caused by the archive's own extraction rules |
 
-Tracked today: OpenAI (ChatGPT), Anthropic (Claude.ai), Google (Generative AI Services), Meta (Facebook, Instagram, WhatsApp, Threads), Apple (Apple, App Store, iCloud).
-
-Each platform in `sources.yaml` lists one or more services. A service is a folder in an Open Terms Archive versions repository (`GenAI-versions`, `pga-versions`, `contrib-versions`). To see what is available, browse the matching `declarations` repositories at <https://github.com/OpenTermsArchive>. A missing document can be proposed to Open Terms Archive.
-
-Change types: only *text changes* are counted. Edits to links or formatting only, wording that is reverted or short-lived, date-only edits and technical updates are kept but hidden by default ("Include minor changes").
-
-## Running locally
-
-```bash
-pip install pyyaml
-python scripts/build.py
-cd site && python -m http.server 8000   # open http://localhost:8000
-```
-
-## Maintenance
-
-- **A banner on the site says the source has not updated for N days.** Open Terms Archive may have stopped tracking or renamed a document. Check its repository and update `sources.yaml`.
-- **The Action fails.** Open the failed run in the Actions tab and read the error. The usual cause is a renamed folder in the source.
-- **Scheduled runs stop.** GitHub disables schedules in repositories with no activity for 60 days. This project commits a timestamp on every run to avoid that. If it happens anyway, re-enable the workflow in the Actions tab.
+Topics (AI, Minors, Personal data, etc.) are assigned from keywords in `scripts/build.py` (`TOPICS`). Upcoming changes come from notices like "These updates will go into effect on …" in the current text.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `sources.yaml` | What is monitored, author name, settings |
-| `scripts/build.py` | Builds all data for the site |
-| `scripts/notify.py` | Writes the text of the email alert |
-| `.github/workflows/update.yml` | Weekly schedule, publishing, alerts |
-| `site/` | The dashboard (HTML, CSS, JavaScript, no build step) |
-| `site/data/` | Generated data, do not edit by hand |
+| `sources.yaml` | Platforms and documents monitored, author, site URL, email settings |
+| `scripts/build.py` | Builds all data for the site (about 3 to 5 minutes) |
+| `scripts/check.py` | Safety check before publishing |
+| `scripts/digest.py` | RSS feed, and the weekly email (inactive until secrets are set) |
+| `scripts/notify.py` | Text of the GitHub Issue for new changes |
+| `.github/workflows/update.yml` | Schedule, checks, publishing |
+| `site/` | The website: `index.html`, `app.js`, `style.css`. Plain HTML/JS, no build step |
+| `site/data/` | Generated data. Never edit by hand |
+| `docs/COVERAGE.md` | What is tracked, what is missing, how to add documents |
+
+## Common tasks
+
+**Add a platform or a service:** add it to `sources.yaml` (see the comments there and `docs/COVERAGE.md`), commit and push. The next run fetches its whole history.
+
+**Run a rebuild now:** repository › Actions › Update T&C data › Run workflow.
+
+**Run locally:**
+```bash
+pip install pyyaml
+python scripts/build.py && python scripts/check.py
+cd site && python -m http.server 8000      # open http://localhost:8000
+```
+Do not commit the local `site/data`: run `git restore site/data` before committing, the workflow rebuilds it.
+
+**Turn on the weekly email:** create a dedicated Gmail account, enable 2-step verification, create an *app password*, then set the repository secrets `SMTP_USER`, `SMTP_PASSWORD` and `MAIL_TO` (comma-separated recipients). Test with Run workflow and "send_digest" ticked.
+
+## When something breaks
+
+| Symptom | What to do |
+|---|---|
+| Red X on the workflow, step "Check the data…" | Read the message: usually a service folder was renamed at Open Terms Archive. Fix the name in `sources.yaml`. The site online is unaffected. |
+| Banner "source has not recorded anything for N days" | Open Terms Archive may have stopped tracking a document. Check the declarations repository. |
+| Scheduled runs stopped | GitHub disables schedules after 60 days without activity. The workflow commits on every run to prevent this; if it happens, re-enable it in the Actions tab. |
+| A change is wrongly hidden or shown | Adjust the rules at the top of `scripts/build.py` (`SMALL_EDIT_WORDS`, `LEGAL_WORDS`, `CHROME_RE`, `FLIP_MAX_WORDS`). |
+
+## Handover
+
+The repository belongs to Alessandro Morigi's GitHub account. To hand it over, add a colleague as collaborator (Settings › Collaborators) or transfer the repository (Settings › Transfer): history and authorship are kept and the old link redirects.
 
 ---
 
-## Versione italiana
+## Versione italiana (in breve)
 
-**Cos'è.** Un sito pubblico e gratuito che registra le modifiche ai termini di servizio e alle policy delle principali piattaforme digitali. Per ogni modifica mostra la data, le sezioni coinvolte e il testo aggiunto o rimosso.
-
-**Come funziona.** Open Terms Archive scarica i documenti più volte al giorno. Ogni lunedì una GitHub Action legge lo storico, calcola le differenze tra le versioni, aggiorna i dati e ripubblica il sito su GitHub Pages. Se ci sono modifiche nuove apre una Issue, che arriva per email a chi segue il repository.
-
-**Configurazione iniziale.**
-1. Crea un repository **pubblico** su GitHub e carica questi file.
-2. **Settings › Pages › Source: GitHub Actions**.
-3. In `sources.yaml` inserisci il tuo profilo GitHub in `author_url`.
-4. **Actions › Update T&C data › Run workflow**. Dopo circa un minuto il sito è online.
-5. Per gli avvisi email: **Watch › Custom › Issues**.
-
-**Aggiungere una piattaforma.** Aggiungi un blocco in `sources.yaml`, vedi la tabella sopra.
-
-**Se qualcosa si rompe.** Guarda la sezione *Maintenance*: nella maggior parte dei casi basta correggere il nome di un documento in `sources.yaml`.
+Sito pubblico e gratuito che registra le modifiche ai termini di OpenAI, Anthropic, Google, Meta e Apple. I dati vengono da Open Terms Archive; ogni lunedì una GitHub Action li confronta, li verifica e ripubblica il sito. Per aggiungere una piattaforma basta modificare `sources.yaml`. Se qualcosa si rompe, il sito online resta com'era: leggere l'errore nel tab Actions e consultare la tabella *When something breaks*. Per passare il progetto a un collega: Settings › Collaborators oppure Settings › Transfer.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-T&C Monitor, weekly email digest and RSS feed.
+TermRadar, weekly email digest and RSS feed.
 
   python scripts/digest.py feed      -> writes site/feed.xml (latest text changes)
   python scripts/digest.py email     -> sends the weekly email (needs the env vars below)
@@ -111,7 +111,7 @@ def email_html(changes, since, until):
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
   <tr><td style="padding:18px 24px;background:#1b2556;border-radius:10px 10px 0 0">
     <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#94ceed;font-weight:700">Weekly digest</div>
-    <div style="font-size:21px;font-weight:700;color:#ffffff;margin-top:2px">T&amp;C Monitor</div>
+    <div style="font-size:21px;font-weight:700;color:#ffffff;margin-top:2px">TermRadar</div>
   </td></tr>
   <tr><td style="padding:22px 24px;background:#ffffff;border:1px solid #e5e8f0;border-top:0;border-radius:0 0 10px 10px">
     {body}
@@ -125,7 +125,7 @@ def email_html(changes, since, until):
 
 
 def email_text(changes, since, until):
-    lines = [f"T&C Monitor, weekly digest ({day(since, False)} to {day(until)})", ""]
+    lines = [f"TermRadar, weekly digest ({day(since, False)} to {day(until)})", ""]
     if not changes:
         lines.append("No relevant text changes were detected this week.")
     for c in changes:
@@ -149,8 +149,8 @@ def send_email():
         return
     msg = EmailMessage()
     n = len(changes)
-    msg["Subject"] = f"T&C Monitor: {n} change{'s' if n != 1 else ''} this week" if n else "T&C Monitor: no relevant changes this week"
-    msg["From"] = f"T&C Monitor <{user}>"
+    msg["Subject"] = f"TermRadar: {n} change{'s' if n != 1 else ''} this week" if n else "TermRadar: no relevant changes this week"
+    msg["From"] = f"TermRadar <{user}>"
     msg["To"] = user                       # recipients go in BCC
     msg["Bcc"] = ", ".join(recipients)
     msg["Date"] = formatdate(localtime=False)
@@ -179,7 +179,7 @@ def write_feed():
     feed = f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
-  <title>T&amp;C Monitor</title>
+  <title>TermRadar</title>
   <link>{SITE}/</link>
   <description>Text changes to the terms and policies of major technology platforms.</description>
   <language>en</language>

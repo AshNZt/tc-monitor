@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1b2556"/><svg x="10" y="7" width="44" height="50" viewBox="230 170 800 930" fill="none" stroke="#ffffff" color="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+  <defs>
+    <mask id="tr-check">
+      <rect x="0" y="0" width="1254" height="1254" fill="white"/>
+      <path d="M682 806 L716 840 L774 774" stroke="black" stroke-width="44" fill="none"/>
+    </mask>
+  </defs>
+  <path d="M600 995 H385 a100 100 0 0 1 -100 -100 V330 a100 100 0 0 1 100 -100 H700 L885 410 V625" stroke-width="58"/>
+  <path d="M715 245 V375 a30 30 0 0 0 30 30 H870" stroke-width="44"/>
+  <path d="M390 410 H630 M390 523 H750 M390 635 H515" stroke-width="54"/>
+  <circle cx="725" cy="800" r="188" stroke-width="52"/>
+  <path d="M862 937 L958 1033" stroke-width="64"/>
+  <path d="M725 690 L828 730 V798 Q828 878 725 925 Q622 878 622 798 V730 Z" fill="currentColor" stroke="none" mask="url(#tr-check)"/>
+</svg></svg>

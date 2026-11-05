@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-T&C Monitor, data builder.
+TermRadar, data builder.
 
 Reads the version history of each monitored document from Open Terms Archive
 (a public git repository of dated Markdown versions), works out every change,

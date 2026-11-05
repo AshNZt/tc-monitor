@@ -32,7 +32,12 @@ platforms:
     monogram: GO
     color: "#6387b7"
     repo: https://github.com/OpenTermsArchive/GenAI-versions
-    services: [Google Generative AI Services]
+    services:
+      - Google Generative AI Services
+      # Google's general Terms of Service and Privacy Policy also govern Gemini
+      - name: Google
+        repo: https://github.com/OpenTermsArchive/contrib-versions
+        documents: [Terms of Service, Privacy Policy]
 
   - id: meta
     name: Meta

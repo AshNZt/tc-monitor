@@ -497,3 +497,7 @@ h1:focus { outline: none; }
 .skel-row { display: flex; gap: 24px; align-items: center; padding: 12px 0; border-bottom: 1px solid #edf0f4; }
 .skel-row .skel { margin: 0; }
 .skel-row .w50 { flex: 1; }
+
+/* TermRadar logo */
+.brand-logo { width: 30px; height: 34px; color: #fff; flex: 0 0 auto; }
+.brand:hover .brand-logo { color: var(--accent); transition: color .2s ease; }

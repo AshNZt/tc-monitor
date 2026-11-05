@@ -1,4 +1,4 @@
-/* T&C Monitor dashboard. Plain JavaScript, no build step.
+/* TermRadar dashboard. Plain JavaScript, no build step.
    Reads data/index.json, data/changes.json and data/changes/<id>.json */
 (() => {
   const app = document.getElementById("app");
