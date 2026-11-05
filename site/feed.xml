@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
-  <title>T&amp;C Monitor</title>
+  <title>TermRadar</title>
   <link>https://ashnzt.github.io/tc-monitor/</link>
   <description>Text changes to the terms and policies of major technology platforms.</description>
   <language>en</language>
-  <lastBuildDate>Thu, 05 Nov 2026 13:12:17 -0000</lastBuildDate>
+  <lastBuildDate>Thu, 05 Nov 2026 13:18:33 -0000</lastBuildDate>
   <item>
     <title>Meta · Instagram Community Guidelines</title>
     <link>https://ashnzt.github.io/tc-monitor/#/change/2026-10-30--meta--instagram--community-guidelines--0e8bd7b</link>
@@ -95,6 +95,14 @@
     <description>Effective Sections: 1. Who we are., 12. Data Switching and Portability, 13. General terms, 14. In case of disputes. </description>
   </item>
   <item>
+    <title>Google · Google Privacy Policy</title>
+    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-10-17--google--google--privacy-policy--3c689e1</link>
+    <guid isPermaLink="false">2026-10-17--google--google--privacy-policy--3c689e1</guid>
+    <pubDate>Sat, 17 Oct 2026 00:41:52 +0000</pubDate>
+    <category>Google</category>
+    <description>Effective 16 October 2026 Archived versions Download PDF Sections: Managing, reviewing, and updating your information, Provide personalised services, including content and ads, personalise content. </description>
+  </item>
+  <item>
     <title>Apple · App Store Review Guidelines</title>
     <link>https://ashnzt.github.io/tc-monitor/#/change/2026-10-17--apple--app-store--review-guidelines--479aa93</link>
     <guid isPermaLink="false">2026-10-17--apple--app-store--review-guidelines--479aa93</guid>
@@ -109,6 +117,14 @@
     <pubDate>Fri, 16 Oct 2026 19:00:15 +0000</pubDate>
     <category>OpenAI</category>
     <description>Sections: 1. API, Business use of the Services addendum. (a) General. OpenAI’s indemnification obligations to API customers under the Agreement include any third party claim that Customer’s use or distribution of Output infringes a third party’s intellectual property right. This indemnity does no</description>
+  </item>
+  <item>
+    <title>Google · Google Privacy Policy</title>
+    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-10-12--google--google--privacy-policy--d55d5ff</link>
+    <guid isPermaLink="false">2026-10-12--google--google--privacy-policy--d55d5ff</guid>
+    <pubDate>Mon, 12 Oct 2026 12:42:12 +0000</pubDate>
+    <category>Google</category>
+    <description>Effective 12 October 2026 Archived versions Download PDF Sections: Legal bases of processing, We want you to understand the types of information we collect as you use our services. </description>
   </item>
   <item>
     <title>OpenAI · Trackers Policy</title>
@@ -335,9 +351,9 @@
     <description>Sections: Marketing Performance cookies. Google GBRAID 24 hours Marketing measurement chatgpt.com / ads.openai.com</description>
   </item>
   <item>
-    <title>Google · Terms of Service</title>
-    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-07-30--google--terms-of-service--a22f762</link>
-    <guid isPermaLink="false">2026-07-30--google--terms-of-service--a22f762</guid>
+    <title>Google · Google Generative AI Services Terms of Service</title>
+    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-07-30--google--google-generative-ai-services--terms-of-service--a22f762</link>
+    <guid isPermaLink="false">2026-07-30--google--google-generative-ai-services--terms-of-service--a22f762</guid>
     <pubDate>Thu, 30 Jul 2026 19:04:13 +0000</pubDate>
     <category>Google</category>
     <description>Effective 30 July 2026 Archived versions Download PDF Sections: About these terms, Develop, improve and update Google services, For business users and organisations only, Google Terms of Service. </description>
@@ -349,6 +365,14 @@
     <pubDate>Thu, 30 Jul 2026 19:02:07 +0000</pubDate>
     <category>OpenAI</category>
     <description>Sections: Managing cookies, Marketing Performance cookies. Source Cookie name Duration Purpose Domain</description>
+  </item>
+  <item>
+    <title>Google · Google Terms of Service</title>
+    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-07-30--google--google--terms-of-service--05df758</link>
+    <guid isPermaLink="false">2026-07-30--google--google--terms-of-service--05df758</guid>
+    <pubDate>Thu, 30 Jul 2026 12:41:07 +0000</pubDate>
+    <category>Google</category>
+    <description>Effective 30 July 2026 Archived versions Download PDF Sections: About these terms, Develop, improve and update Google services, For business users and organisations only, Google Terms of Service. </description>
   </item>
   <item>
     <title>Meta · Instagram Terms of Service</title>
@@ -381,30 +405,6 @@
     <pubDate>Fri, 24 Jul 2026 11:06:38 +0000</pubDate>
     <category>Meta</category>
     <description>This policy covers two categories of ads: Adult Products and Reproductive Health.Ads promoting or marketing dietary, health or weight loss or weight gain products and services must be targeted to people at least 18 years or older.</description>
-  </item>
-  <item>
-    <title>Meta · Facebook Community Guidelines</title>
-    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-07-24--meta--facebook--community-guidelines--fe26e48</link>
-    <guid isPermaLink="false">2026-07-24--meta--facebook--community-guidelines--fe26e48</guid>
-    <pubDate>Fri, 24 Jul 2026 10:56:44 +0000</pubDate>
-    <category>Meta</category>
-    <description>Sections: Community Standards, Fraud, Scams, and Deceptive Practices, Restricted Goods and Services. Weight loss or weight gain products or services</description>
-  </item>
-  <item>
-    <title>Meta · Facebook Privacy Policy</title>
-    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-07-24--meta--facebook--privacy-policy--eb1bd1b</link>
-    <guid isPermaLink="false">2026-07-24--meta--facebook--privacy-policy--eb1bd1b</guid>
-    <pubDate>Fri, 24 Jul 2026 10:53:01 +0000</pubDate>
-    <category>Meta</category>
-    <description>Effective July 23, 2026 Sections: AI integrations, Access and correct information, Communicating with you, Content others share or reshare about you. </description>
-  </item>
-  <item>
-    <title>OpenAI · Trackers Policy</title>
-    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-07-16--openai--trackers-policy--eb309ef</link>
-    <guid isPermaLink="false">2026-07-16--openai--trackers-policy--eb309ef</guid>
-    <pubDate>Thu, 16 Jul 2026 19:01:41 +0000</pubDate>
-    <category>OpenAI</category>
-    <description>Sections: Analytics cookies. OpenAI \ \ obi 1 year Analytics chatgpt.com / openai.com</description>
   </item>
 </channel>
 </rss>
