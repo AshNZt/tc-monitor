@@ -1,8 +1,10 @@
-name: Update T&C data
+name: Update TermRadar data
 
 on:
   schedule:
-    - cron: "17 6 * * 1"   # every Monday at 06:17 UTC
+    # Twice a day: if GitHub delays or skips one scheduled run, the next one catches up.
+    - cron: "17 6 * * *"    # every day at 06:17 UTC
+    - cron: "17 18 * * *"   # every day at 18:17 UTC
   workflow_dispatch:        # "Run workflow" button in the Actions tab
     inputs:
       send_digest:
@@ -39,9 +41,6 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
 
-      - name: Keep previous data for comparison
-        run: cp site/data/changes.json /tmp/previous_changes.json 2>/dev/null || true
-
       - name: Build data from Open Terms Archive
         run: python scripts/build.py
 
@@ -62,15 +61,25 @@ jobs:
           git diff --cached --quiet || git commit -m "Data update $(date -u +%F)"
           git push
 
-      - name: Open an issue for new changes
+      - name: Is this the weekly run? (first scheduled run on Monday)
+        id: weekly
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%u)" = "1" ] && [ "$(date -u +%H)" -lt 12 ]; then
+            echo "yes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "yes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open a weekly issue with the changes of the last 7 days
+        if: steps.weekly.outputs.yes == 'true'
         continue-on-error: true   # a failed alert must not block publishing the site
         env:
           GH_TOKEN: ${{ github.token }}
           SITE: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
         run: |
-          python scripts/notify.py /tmp/previous_changes.json "$SITE" > /tmp/body.md
+          python scripts/notify.py 7 "$SITE" > /tmp/body.md
           if [ -s /tmp/body.md ]; then
-            gh issue create --title "New T&C changes, $(date -u +%F)" --body-file /tmp/body.md
+            gh issue create --title "TermRadar: changes of the week, $(date -u +%F)" --body-file /tmp/body.md
           fi
 
       - uses: actions/configure-pages@v5
@@ -81,7 +90,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Send the weekly email digest
-        if: github.event_name == 'schedule' || inputs.send_digest == true
+        if: steps.weekly.outputs.yes == 'true' || inputs.send_digest == true
         env:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}

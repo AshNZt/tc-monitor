@@ -289,11 +289,46 @@ def plain(line):
     return re.sub(r"\s+", " ", re.sub(r"[*_`#>|\\]", " ", t)).strip()
 
 
+HOLD_RE = re.compile(r"\bon hold\b|\bpaused\b|\bsuspended\b|until further notice|will not (go into|take) effect|"
+                     r"no longer (go into|take) effect|(have|has) been (postponed|withdrawn|cancelled|canceled)", re.I)
+
+
+def announcement_history(changes, hunks_list, since):
+    """Dated announcement lines added to the document since `since`: [{date, seen, change}]."""
+    history = []
+    for c, hunks in zip(changes, hunks_list):
+        if c["date"] < since:
+            continue
+        for h in hunks:
+            for t, l in h["lines"]:
+                if t == "+" and UPCOMING_RE.search(l):
+                    d = find_dates(plain(l))
+                    if d and (not history or history[-1]["date"] != max(d).isoformat()):
+                        history.append({"date": max(d).isoformat(), "seen": c["date"], "change": c["id"]})
+    return history
+
+
 def announcements(text, changes, hunks_list, today):
     """Sentences in the current text that announce an update with a concrete date in the future
     (or that took effect in the last 30 days), with when they were first seen and any date moves."""
     found = []
     for raw in text.splitlines():
+        # an announced update that the platform has put on hold
+        if HOLD_RE.search(raw) and re.search(r"updat|terms|policy|polic", raw, re.I) and len(raw) < 600:
+            since = (today - dt.timedelta(days=180)).isoformat()
+            history = announcement_history(changes, hunks_list, since)
+            if history:
+                held = next((c for c in reversed(changes) for h in [None] if any(
+                    t == "+" and HOLD_RE.search(l) for hh in hunks_list[changes.index(c)] for t, l in hh["lines"])), None)
+                link = re.search(r"\[([^\]]*)\]\((https?://[^)\s]+)\)", raw)
+                found.append({
+                    "effective": history[-1]["date"], "sentence": plain(raw)[:400],
+                    "link": link.group(2) if link else None, "link_text": link.group(1) if link else None,
+                    "first_seen": history[0]["seen"], "date_history": history,
+                    "status": "on_hold", "held_since": held["date"] if held else None,
+                    "held_change": held["id"] if held else None,
+                })
+            continue
         if not UPCOMING_RE.search(raw):
             continue
         dates = find_dates(plain(raw))

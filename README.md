@@ -15,7 +15,7 @@ Open Terms Archive ──► scripts/build.py ──► scripts/check.py ──�
 ```
 
 1. [Open Terms Archive](https://opentermsarchive.org) downloads each document several times a day and keeps every version in public git repositories.
-2. Every Monday at 06:17 UTC the GitHub Action `.github/workflows/update.yml` runs `scripts/build.py`, which reads those versions, compares each with the previous one and writes the data the site reads into `site/data/`.
+2. Twice a day (06:17 and 18:17 UTC) the GitHub Action `.github/workflows/update.yml` runs `scripts/build.py`, which reads those versions, compares each with the previous one and writes the data the site reads into `site/data/`.
 3. `scripts/check.py` verifies the data. If it fails, nothing is published and the site stays as it was.
 4. The site is published on GitHub Pages. New text changes open a GitHub Issue (email to anyone watching the repository).
 
@@ -55,7 +55,7 @@ Topics (AI, Minors, Personal data, etc.) are assigned from keywords in `scripts/
 
 **Add a platform or a service:** add it to `sources.yaml` (see the comments there and `docs/COVERAGE.md`), commit and push. The next run fetches its whole history.
 
-**Run a rebuild now:** repository › Actions › Update T&C data › Run workflow.
+**Run a rebuild now:** repository › Actions › Update TermRadar data › Run workflow.
 
 **Run locally:**
 ```bash

@@ -157,7 +157,9 @@
         ? `<div class="up-moved">Date moved ${a.date_history.length - 1} time${a.date_history.length > 2 ? "s" : ""}: ${a.date_history.map((h) => fmtDate(h.date)).join(" → ")}</div>` : "";
       const first = a.date_history[0];
       return `<article class="up-card" style="--platform:${p.color}">
-        <div class="up-date"><span>${a.status === "upcoming" ? "Takes effect" : "In force since"}</span><strong>${fmtDate(a.effective)}</strong><em>${when}</em></div>
+        ${a.status === "on_hold"
+          ? `<div class="up-date hold"><span>On hold</span><strong>since ${fmtDate(a.held_since)}</strong><em>was due ${fmtDate(a.effective)}</em></div>`
+          : `<div class="up-date"><span>${a.status === "upcoming" ? "Takes effect" : "In force since"}</span><strong>${fmtDate(a.effective)}</strong><em>${when}</em></div>`}
         <div class="up-main">
           <div class="up-doc"><i class="platform-dot" style="--platform:${p.color}"></i><b>${esc(p.name)}</b> · <a href="#/doc/${enc(a.doc_id)}">${esc(a.document)}</a></div>
           <p class="up-sentence">“${esc(a.sentence)}”</p>
@@ -165,12 +167,13 @@
           <div class="up-actions">
             ${a.link ? `<a class="btn" href="${esc(a.link)}" target="_blank" rel="noopener">Read the announced version ↗</a>` : ""}
             ${first ? `<a class="btn" href="#/change/${enc(first.change)}">Announcement, ${fmtDate(first.seen)}</a>` : ""}
+            ${a.held_change ? `<a class="btn" href="#/change/${enc(a.held_change)}">Put on hold, ${fmtDate(a.held_since)}</a>` : ""}
           </div>
         </div>
       </article>`;
     }).join("");
     return `<section class="shell section-block" id="upcoming">
-      ${title ? `<div class="section-heading compact"><div><p class="eyebrow">Announced</p><h2>Upcoming changes</h2><p>Updates a platform has announced in its documents but that are not in force yet.</p></div></div>` : ""}
+      ${title ? `<div class="section-heading compact"><div><p class="eyebrow">Announced</p><h2>Upcoming changes</h2><p>Updates a platform has announced in its documents but that are not in force yet, including announced updates later put on hold.</p></div></div>` : ""}
       <div class="up-list">${cards}</div>
       <p class="footnote">Detected from the notices platforms publish at the top of their documents. The text of the new version is usually only on the platform's preview page, which is not archived: open it with "Read the announced version".</p>
     </section>`;
@@ -222,6 +225,7 @@
         </div>
         <div class="updated"><span class="status-dot"></span>Last updated: <strong>${fmtDate(index.generated_at)}</strong></div>
       </section>
+      ${daysAgo(index.generated_at) > 3 ? `<div class="shell"><div class="notice">The data was last refreshed on <b>${fmtDate(index.generated_at)}</b>. The automatic update may have stopped: newer changes may be missing.</div></div>` : ""}
       ${stale.length ? `<div class="shell">${stale.map((s) => `<div class="notice">The source for <b>${esc(s.name)}</b> has not recorded anything for ${s.age_days ?? "many"} days. Recent changes may be missing.</div>`).join("")}</div>` : ""}
 
       <section class="shell summary-grid" aria-label="Summary statistics">

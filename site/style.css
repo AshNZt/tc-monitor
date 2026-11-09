@@ -501,3 +501,8 @@ h1:focus { outline: none; }
 /* TermRadar logo */
 .brand-logo { width: 30px; height: 34px; color: #fff; flex: 0 0 auto; }
 .brand:hover .brand-logo { color: var(--accent); transition: color .2s ease; }
+
+.up-date.hold { background: #f3f4f8; border-right-color: #e2e5ee; }
+.up-date.hold span { color: #8a1c2b; }
+.up-date.hold strong { font-size: 17px; }
+.up-date.hold em { color: #676d80; }
