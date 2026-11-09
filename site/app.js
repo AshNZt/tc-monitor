@@ -9,6 +9,7 @@
     substantive: "Text change",
     first: "First record",
     formatting: "Links, formatting or page elements",
+    layout: "Layout, headings or navigation",
     "fetch-error": "Source page error",
     "small-edit": "Small edit",
     reverted: "Reverted to earlier wording",
@@ -16,7 +17,7 @@
     "date-only": "Date only",
     technical: "Technical",
   };
-  const MINOR = new Set(["formatting", "fetch-error", "small-edit", "reverted", "temporary", "date-only", "technical"]);
+  const MINOR = new Set(["formatting", "layout", "fetch-error", "small-edit", "reverted", "temporary", "date-only", "technical"]);
 
   // ---------- helpers ----------
   const skeletonRows = (n) => `<div class="skel-list">${Array.from({ length: n }, () => `<div class="skel-row"><span class="skel w20"></span><span class="skel w50"></span><span class="skel w15"></span></div>`).join("")}</div>`;
@@ -101,7 +102,7 @@
     const p = P(c.platform);
     return `<a class="feed-row" href="#/change/${enc(c.id)}">
       <span class="feed-date">${fmtDate(c.date)}</span>
-      <div class="feed-doc" style="--platform:${p.color}"><i class="platform-dot"></i><div><strong>${esc(p.name)}</strong><span> · ${esc(c.document)}</span>${typeTag(c.type)}</div></div>
+      <div class="feed-doc" style="--platform:${p.color}"><i class="platform-dot"></i><div><strong>${esc(p.name)}</strong><span> · ${esc(c.document)}</span>${typeTag(c.type)}${c.significance === "major" ? `<span class="sig-major" title="Large rewrite or change to words that affect rights and obligations">Major</span>` : ""}</div></div>
       <span class="feed-section">${topicTags(c)}${esc(c.sections.slice(0, 2).join(" · ")) || (c.topics && c.topics.length ? "" : "&nbsp;")}</span>
       ${diffBadge(c)}
     </a>`;
@@ -399,6 +400,7 @@
       month: params.get("month") || "",
       q: params.get("q") || "",
       topic: params.get("topic") || "",
+      major: params.get("major") === "1",
       all: params.get("all") === "1",
     };
     let limit = 150;
@@ -416,6 +418,7 @@
             <select id="f-doc" aria-label="Document"></select>
             <select id="f-topic" aria-label="Topic"><option value="">All topics</option>${(index.topics || []).map((t) => `<option value="${t.id}" ${t.id === f.topic ? "selected" : ""}>${esc(t.label)}</option>`).join("")}</select>
             <input type="search" id="f-q" placeholder="Search the changed text, e.g. scraping, biometric, arbitration" value="${esc(f.q)}" aria-label="Filter">
+            <label class="check"><input type="checkbox" id="f-major" ${f.major ? "checked" : ""}> Major only</label>
             <label class="check"><input type="checkbox" id="f-all" ${f.all ? "checked" : ""}> Include minor changes</label>
             <button class="export-button" type="button" id="export"><svg viewBox="0 0 24 24"><path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3"/></svg>Export</button>
           </div>
@@ -433,6 +436,7 @@
         (!f.doc || c.doc_id === f.doc) &&
         (!f.month || monthKey(c.date) === f.month) &&
         (!f.topic || (c.topics || []).includes(f.topic)) &&
+        (!f.major || c.significance === "major") &&
         (!q || c.document.toLowerCase().includes(q) || c.sections.join(" ").toLowerCase().includes(q) ||
           (state.search && (state.search[c.id] || "").toLowerCase().includes(q))));
     };
@@ -476,6 +480,7 @@
     };
     document.getElementById("f-doc").onchange = (e) => { f.doc = e.target.value; sync(); };
     document.getElementById("f-topic").onchange = (e) => { f.topic = e.target.value; sync(); };
+    document.getElementById("f-major").onchange = (e) => { f.major = e.target.checked; sync(); };
     const loadSearch = async () => {
       if (state.search || state.searchLoading) return;
       state.searchLoading = true;
@@ -544,9 +549,41 @@
   }
 
   // Word-level diff as one merged token list: [{t: "eq"|"del"|"ins", s}]
+  const sentencesOf = (t) => t.match(/[^.!?;:]+(?:[.!?;:]+["”’)]?\s*|$)/g)?.filter(Boolean) || [t];
+
+  // Long paragraphs: align sentence by sentence first, then compare words only inside
+  // the sentences that differ (so a changed address inside a long clause shows as just that).
   function mergeTokens(a, b) {
     const ta = a.match(/\s+|[^\s]+/g) || [], tb = b.match(/\s+|[^\s]+/g) || [];
-    if (ta.length * tb.length > 400000) return [{ t: "del", s: a }, { t: "eq", s: " " }, { t: "ins", s: b }];
+    if (ta.length * tb.length <= 40000) return mergeWords(a, b);
+    const sa = sentencesOf(a), sb = sentencesOf(b), n = sa.length, m = sb.length;
+    if (n * m > 250000) return [{ t: "del", s: a }, { t: "ins", s: b }];
+    const key = (x) => x.replace(/\s+/g, " ").trim();
+    const dp = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+    for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--)
+      dp[i][j] = key(sa[i]) === key(sb[j]) ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    const out = [];
+    let i = 0, j = 0, ga = "", gb = "";
+    const flush = () => {
+      if (ga && gb) out.push(...mergeWords(ga, gb));
+      else if (ga) out.push({ t: "del", s: ga });
+      else if (gb) out.push({ t: "ins", s: gb });
+      ga = ""; gb = "";
+    };
+    while (i < n && j < m) {
+      if (key(sa[i]) === key(sb[j])) { flush(); out.push({ t: "eq", s: sb[j] }); i++; j++; }
+      else if (dp[i + 1][j] >= dp[i][j + 1]) ga += sa[i++];
+      else gb += sb[j++];
+    }
+    while (i < n) ga += sa[i++];
+    while (j < m) gb += sb[j++];
+    flush();
+    return cleanup(out);
+  }
+
+  function mergeWords(a, b) {
+    const ta = a.match(/\s+|[^\s]+/g) || [], tb = b.match(/\s+|[^\s]+/g) || [];
+    if (ta.length * tb.length > 250000) return [{ t: "del", s: a }, { t: "ins", s: b }];
     const n = ta.length, m = tb.length;
     const dp = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
     for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--)
@@ -644,7 +681,8 @@
         if (best >= 0) { used.add(best); pairOf.set(best, i); }
       });
       const pairedDels = new Set(pairOf.values());
-      const plain = (x) => pretty(x).replace(/\s+/g, " ").trim();
+      // compare without list markers and spacing: "• Effective" vs "Effective" is not a change
+      const plain = (x) => pretty(x).replace(/^\s*•\s*/, "").replace(/\s+/g, " ").trim();
       const withLead = (it, raw) => {
         const prev = items[items.length - 1];
         const prevText = prev ? plain(prev.kind === "modified" ? prev.after : prev.text) : "";
@@ -663,6 +701,14 @@
     return items;
   }
 
+  let currentDocId = "";
+  // link from a changed paragraph straight to the same paragraph in the current text
+  const findLink = (raw) => {
+    const snippet = pretty(raw).replace(/^\s*•\s*/, "").replace(/\s+/g, " ").trim().slice(0, 80);
+    return currentDocId && snippet.length > 8
+      ? `<a class="pi-find" href="#/doc/${enc(currentDocId)}?find=${enc(snippet)}" title="Open this paragraph in the current text">In current text →</a>` : "";
+  };
+
   function renderItem(it) {
     const lead = it.lead ? `<div class="pi-lead">${esc(it.lead.length > 220 ? it.lead.slice(0, 220) + "…" : it.lead)}</div>` : "";
     const longText = (txt) => {
@@ -672,23 +718,21 @@
     if (it.kind === "modified") {
       const a = pretty(it.before), b = pretty(it.after);
       const tokens = mergeTokens(a, b);
-      const changed = tokens.filter((x) => x.t !== "eq").reduce((n, x) => n + words(x.s).length, 0);
-      const small = changed <= 15 || similarity(a, b) >= 0.75;
-      if (small) {
-        const { short, full, trimmed } = trimToChanges(tokens);
-        return `<div class="pi mod" data-kind="modified">${lead}<p class="inline-diff" data-full="${esc(full)}">${short}</p>${trimmed ? `<button type="button" class="pi-more" data-full-toggle>Show full paragraph</button>` : ""}</div>`;
-      }
-      const [x, y] = wordDiff(a, b);
-      return `<div class="pi mod" data-kind="modified">${lead}
-        <div class="pi-row"><span class="pi-label">Before</span><p>${x}</p></div>
-        <div class="pi-row"><span class="pi-label">After</span><p>${y}</p></div></div>`;
+      const before = trimToChanges(tokens.filter((x) => x.t !== "ins"));
+      const after = trimToChanges(tokens.filter((x) => x.t !== "del"));
+      const trimmed = before.trimmed || after.trimmed;
+      return `<div class="pi mod" data-kind="modified">${lead}${findLink(it.after)}
+        <div class="pi-row"><span class="pi-label">Before</span><p class="inline-diff before" data-full="${esc(before.full)}">${before.short}</p></div>
+        <div class="pi-row"><span class="pi-label">After</span><p class="inline-diff after" data-full="${esc(after.full)}">${after.short}</p></div>
+        ${trimmed ? `<button type="button" class="pi-more" data-full-toggle>Show full paragraph</button>` : ""}</div>`;
     }
-    if (it.kind === "added") return `<div class="pi add" data-kind="added">${lead}${longText(it.text)}</div>`;
+    if (it.kind === "added") return `<div class="pi add" data-kind="added">${lead}${findLink(it.text)}${longText(it.text)}</div>`;
     const t = pretty(it.text);
     return `<details class="pi rem" data-kind="removed"><summary><span class="rem-label">Removed</span><span class="pi-preview">${esc(t.slice(0, 140))}${t.length > 140 ? "…" : ""}</span></summary>${lead}<p>${esc(t)}</p></details>`;
   }
 
   function renderChangeBody(hunks, docId) {
+    currentDocId = docId;
     const groups = [];
     for (const h of hunks) {
       const items = hunkItems(h);
@@ -729,9 +773,14 @@
     body.addEventListener("click", (e) => {
       const ft = e.target.closest("[data-full-toggle]");
       if (ft) {
-        const p = ft.previousElementSibling;
-        if (!p.dataset.short) { p.dataset.short = p.innerHTML; p.innerHTML = p.dataset.full; ft.textContent = "Show only the changed sentences"; }
-        else { p.innerHTML = p.dataset.short; delete p.dataset.short; ft.textContent = "Show full paragraph"; }
+        const ps = ft.closest(".pi").querySelectorAll("p[data-full]");
+        const expand = !ft.dataset.expanded;
+        ps.forEach((p) => {
+          if (expand) { p.dataset.short = p.innerHTML; p.innerHTML = p.dataset.full; }
+          else { p.innerHTML = p.dataset.short; delete p.dataset.short; }
+        });
+        if (expand) ft.dataset.expanded = "1"; else delete ft.dataset.expanded;
+        ft.textContent = expand ? "Show only the changed sentences" : "Show full paragraph";
       }
       const more = e.target.closest("[data-more]");
       if (more) { const p = more.previousElementSibling; p.classList.toggle("clamp"); more.textContent = p.classList.contains("clamp") ? "Show full paragraph" : "Show less"; }
@@ -758,6 +807,7 @@
         <div class="meta-row">
           <span>Detected <b>${fmtDate(c.date, { weekday: "short", day: "numeric", month: "long", year: "numeric" })}</b></span>
           ${c.type !== "first" ? `<span>About <b>${c.words_changed ?? "?"}</b> words changed</span>` : ""}
+          ${c.significance ? `<span class="sig ${c.significance}">${c.significance === "major" ? "Major change" : "Minor wording change"}</span>` : ""}
           ${c.declared_dates.length ? `<span>Date stated in document: <b>${esc(c.declared_dates.join(", "))}</b></span>` : ""}
         </div>
         ${c.unstable ? `<div class="notice">This wording did not stay stable: the document switched back and forth between versions within a few weeks. Check the previous and next changes before relying on it.</div>` : ""}
@@ -822,6 +872,8 @@
           <li>Once a week this site reads that archive and compares each version with the previous one.</li>
           <li>Each change is classified. Only <b>text changes</b> are counted in the totals and charts. These are hidden by default as <b>minor changes</b>: edits to links or formatting only, <b>small edits</b> of at most 5 words (typos, contact details, names) unless they touch words that can change the meaning such as "may", "must", "not" or "consent", changes to page elements such as menus or survey banners, versions recorded while the source page showed an error, small edits of up to 50 words that return to a version seen in the previous 60 days or disappear again within 30 days (larger ones stay visible, with a warning), edits to the "updated" date only, and technical updates of the archive itself.</li>
         </ol>
+        <h2>Major and minor text changes</h2>
+        <p>Text changes are marked <b>Major</b> when sentences of at least 100 words were rewritten, when at least two words that change rights or obligations were added or removed (such as "may", "must", "not", "only", "consent", "delete", "train", "fee", "arbitration"), or when the change announces an effective date. Other text changes are minor wording changes. Changes to headings, labels, menus or table cells only are hidden as <i>Layout, headings or navigation</i>. Use "Major only" in the change log to see the most important ones.</p>
         <h2>Topics</h2>
         <p>Each text change gets up to three topics (AI, Minors, Personal data, Advertising, Content moderation, Disputes &amp; liability, Payments &amp; pricing, Fraud &amp; security, IP &amp; licences, Law enforcement), assigned automatically from keywords in the changed text. They are a guide for browsing, not a legal classification: always read the change itself.</p>
         <h2>Not legal advice</h2>

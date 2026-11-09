@@ -506,3 +506,16 @@ h1:focus { outline: none; }
 .up-date.hold span { color: #8a1c2b; }
 .up-date.hold strong { font-size: 17px; }
 .up-date.hold em { color: #676d80; }
+
+/* Significance and split before/after */
+.sig-major { display: inline-block; margin-left: 6px; padding: 1px 7px; color: #fff; background: #b4232f; border-radius: 4px; font-size: 10.5px; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; vertical-align: 1px; }
+.sig { padding: 2px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 650; }
+.sig.major { color: #fff; background: #b4232f; }
+.sig.minor { color: #4b5168; background: #eceef3; }
+.pi.mod { position: relative; }
+.pi-row p.before { color: #4b5168; }
+.pi-row p.before del { color: #8a1c2b; background: #f8d7dc; text-decoration-color: #b4232f; }
+.pi-row p.after ins { color: #135c2c; background: #cdeed9; }
+.pi-find { float: right; margin: 0 0 6px 12px; color: #2f6f99; font-size: 12.5px; font-weight: 600; }
+.pi-find:hover { text-decoration: underline; }
+.pi.mod .pi-row + .pi-row { margin-top: 2px; }

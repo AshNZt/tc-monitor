@@ -117,6 +117,7 @@ ANNOUNCE_RE = re.compile(r"go(es)? into effect|take[s]? effect|effective|we('| a
 
 def words_of(line):
     t = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", normalize(line))
+    t = re.sub(r"(\d)([^\W\d_])", r"\1 \2", t)      # "01Collection" -> "01 Collection"
     t = re.sub(r"https?://\S+", " ", t)
     return re.findall(r"[^\W_]+", t.lower())
 
@@ -125,8 +126,10 @@ def words_of(line):
 CHROME_RE = re.compile(
     r"have a moment|tell us how we|take (the )?survey|other ways to get help|copy link|related articles|"
     r"was this (page |article )?helpful|request user information|submit an emergency|preserve account records|"
-    r"i have a different question|view printable version|^\s*!\[|logo for|^\s*_?notice_?\s*$|skip to (main )?content",
+    r"i have a different question|view printable version|^\s*!\[|logo for|^\s*_?notice_?\s*$|skip to (main )?content|"
+    r"^\s*[*-]?\s*(see )?version history\s*$|^\s*[*-]?\s*(effective|type|audience|language|last updated)\s*$",
     re.I)
+LAYOUT_WORDS = {"section", "sections", "article", "chapter", "part", "clause", "paragraph"}
 MONTHS = set("jan feb mar apr may jun jul aug sep sept oct nov dec january february march april june july "
              "august september october november december".split())
 
@@ -144,6 +147,31 @@ def changed_words(hunks):
                 rem.update(words_of(l))
             elif t == "+":
                 add.update(words_of(l))
+    gone, new = rem - add, add - rem
+    return sum(gone.values()) + sum(new.values()), set(gone) | set(new)
+
+
+# Words that change obligations or rights: touching one makes a change "major"
+MEANING_WORDS = set("""may must shall not never only unless except prohibited prohibit required require
+consent opt delete sell share train training liable liability arbitration indemnify fee fees price
+minimum maximum days terminate suspend waive waiver""".split())
+PROSE_MIN_WORDS = 6    # lines shorter than this are headings, labels, menus or table cells
+MAJOR_MIN_WORDS = 100  # a rewrite of at least this many words in sentences counts as major
+
+
+def prose_changed_words(hunks):
+    """Like changed_words, but only counting lines that read like sentences (at least
+    PROSE_MIN_WORDS words). Headings, navigation, metadata labels and short table cells are ignored."""
+    from collections import Counter
+    rem, add = Counter(), Counter()
+    for h in hunks:
+        for t, l in h["lines"]:
+            if t == " " or CHROME_RE.search(l):
+                continue
+            w = words_of(l)
+            if len(w) < PROSE_MIN_WORDS:
+                continue
+            (rem if t == "-" else add).update(w)
     gone, new = rem - add, add - rem
     return sum(gone.values()) + sum(new.values()), set(gone) | set(new)
 
@@ -469,7 +497,8 @@ def build():
                     kind = classify(subject, hunks)
                     key = content_key(text)
                     n_words, which = changed_words(hunks) if prev is not None else (0, set())
-                    announces = any(t != " " and ANNOUNCE_RE.search(l) for h in hunks for t, l in h["lines"])
+                    announces = any(t != " " and ANNOUNCE_RE.search(l) and find_dates(plain(l))
+                                    for h in hunks for t, l in h["lines"])
                     unstable = False
                     size_new, size_old = len(key.split()), len(content_key(prev).split()) if prev is not None else 0
                     after_error = bool(changes) and changes[-1]["type"] == "fetch-error"
@@ -480,8 +509,12 @@ def build():
                     elif kind == "substantive" and prev is not None:
                         if key == content_key(prev) or n_words == 0:
                             kind = "formatting"
+                        elif which and all(w.isdigit() or w in LAYOUT_WORDS for w in which):
+                            kind = "formatting"      # only numbering labels changed, e.g. "Section 01:" -> "01"
                         elif which and all(w.isdigit() or w in MONTHS for w in which) and not announces:
                             kind = "date-only"
+                        elif prose_changed_words(hunks)[0] == 0 and not announces:
+                            kind = "layout"          # only headings, labels, menus or table cells changed
                         elif n_words <= SMALL_EDIT_WORDS and not (which & LEGAL_WORDS) and not announces:
                             kind = "small-edit"
                         else:
@@ -505,6 +538,12 @@ def build():
                                     break
                     cid = f"{date[:10]}--{doc_id}--{sha[:7]}"
                     sections = sorted({h["section"] for h in hunks if h["section"]})
+                    significance = None
+                    if kind == "substantive":
+                        n_prose, which_prose = prose_changed_words(hunks)
+                        # major: a large rewrite, or several words that change obligations or rights, or an announced date
+                        significance = "major" if (n_prose >= MAJOR_MIN_WORDS or len(which_prose & MEANING_WORDS) >= 2
+                                                   or announces) else "minor"
                     ctext = changed_text(hunks) if prev is not None else ""
                     if kind not in ("formatting", "fetch-error", "technical", "first"):
                         search_index[cid] = search_text(ctext)
@@ -513,6 +552,7 @@ def build():
                         "service": service, "doc_id": doc_id, "document": label, "type": kind,
                         "added": add, "removed": rem, "words_changed": n_words, "sections": sections,
                         "unstable": unstable,
+                        "significance": significance,
                         "topics": topics_for(ctext, sections) if kind in ("substantive", "small-edit") else [],
                         "declared_dates": declared_dates(text),
                         "source_commit": f"{web}/commit/{sha}",
@@ -567,7 +607,7 @@ def build():
     # The site loads the main list on every page, so keep it small: text changes and first
     # records only, without fields the list never shows. Minor changes go in a second file
     # that is loaded only when someone ticks "Include minor changes".
-    MINOR_TYPES = {"formatting", "fetch-error", "small-edit", "reverted", "temporary", "date-only", "technical"}
+    MINOR_TYPES = {"formatting", "layout", "fetch-error", "small-edit", "reverted", "temporary", "date-only", "technical"}
     slim = lambda c: {k: v for k, v in c.items() if k != "source_commit" and v not in ([], False, None)}
     (OUT / "changes.json").write_text(json.dumps(
         [slim(c) for c in all_changes if c["type"] not in MINOR_TYPES], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
