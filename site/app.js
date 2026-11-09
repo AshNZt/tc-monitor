@@ -102,7 +102,7 @@
     const p = P(c.platform);
     return `<a class="feed-row" href="#/change/${enc(c.id)}">
       <span class="feed-date">${fmtDate(c.date)}</span>
-      <div class="feed-doc" style="--platform:${p.color}"><i class="platform-dot"></i><div><strong>${esc(p.name)}</strong><span> · ${esc(c.document)}</span>${typeTag(c.type)}${c.significance === "major" ? `<span class="sig-major" title="Large rewrite or change to words that affect rights and obligations">Major</span>` : ""}</div></div>
+      <div class="feed-doc" style="--platform:${p.color}"><i class="platform-dot"></i><div><strong>${esc(p.name)}</strong><span> · ${esc(c.document)}</span>${typeTag(c.type)}${c.significance === "major" ? `<span class="sig-major" title="Large rewrite, or change to words that affect rights and obligations">Major</span>` : ""}</div></div>
       <span class="feed-section">${topicTags(c)}${esc(c.sections.slice(0, 2).join(" · ")) || (c.topics && c.topics.length ? "" : "&nbsp;")}</span>
       ${diffBadge(c)}
     </a>`;
