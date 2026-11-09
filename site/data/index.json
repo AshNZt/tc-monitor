@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T10:23:56+00:00",
+ "generated_at": "2026-11-09T10:33:38+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -851,7 +851,34 @@
    "stale": false
   }
  ],
- "upcoming": [],
+ "upcoming": [
+  {
+   "effective": "2026-11-20",
+   "sentence": "We recently shared a preview of updated Commercial Terms. These updates are on hold. The existing Commercial Terms remain in effect until further notice.",
+   "link": null,
+   "link_text": null,
+   "first_seen": "2026-10-01T00:31:58Z",
+   "date_history": [
+    {
+     "date": "2026-10-30",
+     "seen": "2026-10-01T00:31:58Z",
+     "change": "2026-10-01--meta--facebook--commercial-terms--c2e2067"
+    },
+    {
+     "date": "2026-11-20",
+     "seen": "2026-10-23T00:32:00Z",
+     "change": "2026-10-23--meta--facebook--commercial-terms--ac71532"
+    }
+   ],
+   "status": "on_hold",
+   "held_since": "2026-11-06T00:31:58Z",
+   "held_change": "2026-11-06--meta--facebook--commercial-terms--b0799dd",
+   "platform": "meta",
+   "platform_name": "Meta",
+   "doc_id": "meta--facebook--commercial-terms",
+   "document": "Facebook Commercial Terms"
+  }
+ ],
  "topics": [
   {
    "id": "ai",
