@@ -820,6 +820,16 @@
         </ol>
         <h2>Topics</h2>
         <p>Each text change gets up to three topics (AI, Minors, Personal data, Advertising, Content moderation, Disputes &amp; liability, Payments &amp; pricing, Fraud &amp; security, IP &amp; licences, Law enforcement), assigned automatically from keywords in the changed text. They are a guide for browsing, not a legal classification: always read the change itself.</p>
+        <h2>Not legal advice</h2>
+        <p>TermRadar is an information tool. Change types, topics, sections and announced dates are produced automatically and can be incomplete or wrong. The archived texts may differ from what a given user sees (country, language, account type). Always check the change against the platform's official document before relying on it, and seek legal advice for decisions.</p>
+        <h2>Data sources and attribution</h2>
+        <p>Document versions come from <a href="https://opentermsarchive.org">Open Terms Archive</a> and are used under the <a href="https://opendatacommons.org/licenses/by/1-0/">Open Data Commons Attribution License (ODC-By 1.0)</a>:</p>
+        <ul>
+          <li><b>OpenAI, Anthropic, Google (Generative AI):</b> <a href="https://github.com/OpenTermsArchive/GenAI-versions">GenAI collection</a>, © Open Terms Archive contributors.</li>
+          <li><b>Google (general terms), Apple:</b> <a href="https://github.com/OpenTermsArchive/contrib-versions">Contrib collection</a>, © Open Terms Archive contributors.</li>
+          <li><b>Meta:</b> Katzenbach, C., Dergachava, D., Fischer, A., Kopps, A., Kolesnikov, S., Redeker, D., Viejo Otero, P. (2023). <i>Platform Governance Archive (PGA): Dataset PGA v2</i>. <a href="https://doi.org/10.26092/elib/2373">https://doi.org/10.26092/elib/2373</a>.</li>
+        </ul>
+        <p>The documents themselves are the terms and policies of the respective platforms. TermRadar adds the comparison, classification and presentation.</p>
         <h2>Licence and use</h2>
         <p>The TermRadar code and site are licensed under the <a href="https://polyformproject.org/licenses/noncommercial/1.0.0">PolyForm Noncommercial License 1.0.0</a>: they may be used, copied and adapted <b>only for non-commercial purposes</b>. Selling the tool, offering it as a paid service or using it in commercial products requires permission. The full text is in the LICENSE file of the source repository.</p>
         <p>The archived documents are the terms of the respective platforms and come from Open Terms Archive; this licence does not cover them.</p>

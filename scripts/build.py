@@ -239,6 +239,18 @@ def changed_text(hunks):
     return " ".join(p for p in parts if p)
 
 
+def search_text(text, limit=6000):
+    """Text used by the site's search box: the whole changed text, lower-cased.
+    Very long rewrites are cut after `limit` characters, followed by the set of
+    remaining distinct words, so every word stays findable."""
+    t = text.lower()
+    if len(t) <= limit:
+        return t
+    head, tail = t[:limit], t[limit:]
+    extra = sorted(set(re.findall(r"[^\W_]{3,}", tail)) - set(re.findall(r"[^\W_]{3,}", head)))
+    return head + " " + " ".join(extra)
+
+
 def topics_for(text, sections):
     blob = text + " " + " ".join(sections)
     hits = [(len(rx.findall(blob)), k) for k, _, rx in TOPIC_RX]
@@ -315,7 +327,7 @@ def diff_hunks(old, new):
     a, b = normalize(old).splitlines(), normalize(new).splitlines()
     sec_b, sec_a = headings(b), headings(a)
     sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
-    hunks, added, removed = [], 0, 0
+    hunks, added, removed, seen = [], 0, 0, set()
     for group in sm.get_grouped_opcodes(CONTEXT):
         lines, section = [], ""
         for tag, i1, i2, j1, j2 in group:
@@ -335,6 +347,12 @@ def diff_hunks(old, new):
         # drop pure blank-line changes
         if not any(t != " " and l.strip() for t, l in lines):
             continue
+        # drop a hunk whose changed lines repeat an earlier hunk exactly
+        # (some source pages, e.g. Facebook's privacy policy, repeat whole sections)
+        sig = tuple((t, l.strip()) for t, l in lines if t != " " and l.strip())
+        if sig in seen:
+            continue
+        seen.add(sig)
         hunks.append({
             "section": clean_heading(section),
             "old_start": group[0][1] + 1,
@@ -342,6 +360,8 @@ def diff_hunks(old, new):
             "lead": lead_in(b, group[0][3]),
             "lines": lines,
         })
+    added = sum(1 for h in hunks for t, l in h["lines"] if t == "+" and l.strip())
+    removed = sum(1 for h in hunks for t, l in h["lines"] if t == "-" and l.strip())
     return hunks, added, removed
 
 
@@ -452,7 +472,7 @@ def build():
                     sections = sorted({h["section"] for h in hunks if h["section"]})
                     ctext = changed_text(hunks) if prev is not None else ""
                     if kind not in ("formatting", "fetch-error", "technical", "first"):
-                        search_index[cid] = ctext[:600]
+                        search_index[cid] = search_text(ctext)
                     entry = {
                         "id": cid, "date": date, "platform": p["id"], "platform_name": p["name"],
                         "service": service, "doc_id": doc_id, "document": label, "type": kind,

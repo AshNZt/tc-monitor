@@ -47,6 +47,7 @@ Topics (AI, Minors, Personal data, etc.) are assigned from keywords in `scripts/
 | `scripts/notify.py` | Text of the GitHub Issue for new changes |
 | `.github/workflows/update.yml` | Schedule, checks, publishing |
 | `site/` | The website: `index.html`, `app.js`, `style.css`. Plain HTML/JS, no build step |
+| `site/vendor/` | Copies of marked 12.0.2 (MIT) and DOMPurify 3.1.6 (Apache 2.0 / MPL 2.0), served from the site itself so no visitor data goes to third parties |
 | `site/data/` | Generated data. Never edit by hand |
 | `docs/COVERAGE.md` | What is tracked, what is missing, how to add documents |
 
@@ -88,5 +89,9 @@ Sito pubblico e gratuito che registra le modifiche ai termini di OpenAI, Anthrop
 ---
 
 ## Licence
+
+Data: document versions from Open Terms Archive under [ODC-By 1.0](https://opendatacommons.org/licenses/by/1-0/), © Open Terms Archive contributors (GenAI and Contrib collections); Meta documents from Katzenbach et al. (2023), *Platform Governance Archive (PGA): Dataset PGA v2*, https://doi.org/10.26092/elib/2373. The attribution is shown on the site's About page and must be kept.
+
+The site is for information only and is not legal advice.
 
 Code and site: [PolyForm Noncommercial License 1.0.0](LICENSE.md). Use, copying and modification are allowed **for non-commercial purposes only**. The archived documents belong to the respective platforms and come from Open Terms Archive; they are not covered by this licence.
