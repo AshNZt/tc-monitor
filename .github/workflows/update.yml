@@ -58,8 +58,16 @@ jobs:
           git config user.name "${{ github.repository_owner }}"
           git config user.email "${{ github.repository_owner_id }}+${{ github.repository_owner }}@users.noreply.github.com"
           git add site/data site/feed.xml
-          git diff --cached --quiet || git commit -m "Data update $(date -u +%F)"
-          git push
+          if git diff --cached --quiet; then echo "No data changes"; exit 0; fi
+          git commit -m "Data update $(date -u +%F)"
+          # someone may have pushed during the run: replay our data commit on top and retry
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "Push attempt $attempt failed, retrying in 15 seconds"
+            sleep 15
+          done
+          echo "Could not push the data commit after 3 attempts"
+          exit 1
 
       - name: Is this the weekly run? (first scheduled run on Monday)
         id: weekly
