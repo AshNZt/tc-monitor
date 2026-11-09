@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T10:41:00+00:00",
+ "generated_at": "2026-11-09T13:25:47+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -119,7 +119,7 @@
      "last_change": "2025-06-21T00:30:29Z",
      "last_substantive_change": "2025-06-05T00:30:30Z",
      "versions": 14,
-     "substantive_changes": 5,
+     "substantive_changes": 4,
      "declared_dates": [
       "May 31, 2025"
      ],
@@ -222,9 +222,9 @@
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:07Z",
      "last_change": "2026-11-09T07:02:15Z",
-     "last_substantive_change": "2026-11-09T07:02:15Z",
+     "last_substantive_change": "2026-10-20T19:03:39Z",
      "versions": 7,
-     "substantive_changes": 3,
+     "substantive_changes": 2,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Commercial%20Terms.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Commercial%20Terms.md"
@@ -261,9 +261,9 @@
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:06Z",
      "last_change": "2026-11-09T07:02:13Z",
-     "last_substantive_change": "2026-11-09T07:02:13Z",
+     "last_substantive_change": "2026-10-20T19:03:35Z",
      "versions": 17,
-     "substantive_changes": 13,
+     "substantive_changes": 11,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Privacy%20Policy.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Privacy%20Policy.md"
@@ -274,9 +274,9 @@
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:05Z",
      "last_change": "2026-11-09T07:02:12Z",
-     "last_substantive_change": "2026-11-09T07:02:12Z",
+     "last_substantive_change": "2026-10-20T19:03:34Z",
      "versions": 20,
-     "substantive_changes": 6,
+     "substantive_changes": 5,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Terms%20of%20Service.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Terms%20of%20Service.md"
@@ -360,7 +360,7 @@
      "last_change": "2026-10-27T12:41:54Z",
      "last_substantive_change": "2026-10-17T00:41:52Z",
      "versions": 56,
-     "substantive_changes": 27,
+     "substantive_changes": 26,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/Google/Privacy%20Policy.md",
      "current_url": "https://github.com/OpenTermsArchive/contrib-versions/blob/main/Google/Privacy%20Policy.md"
@@ -556,9 +556,9 @@
      "service": "Instagram",
      "tracked_since": "2026-02-06T12:40:00Z",
      "last_change": "2026-09-10T00:47:56Z",
-     "last_substantive_change": "2026-09-10T00:47:56Z",
+     "last_substantive_change": "2026-03-24T00:40:18Z",
      "versions": 3,
-     "substantive_changes": 2,
+     "substantive_changes": 1,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Advertising%20Content%20Policy.md",
      "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Advertising%20Content%20Policy.md"
@@ -608,9 +608,9 @@
      "service": "Instagram",
      "tracked_since": "2022-07-11T14:59:20Z",
      "last_change": "2026-10-18T12:46:54Z",
-     "last_substantive_change": "2023-08-23T00:32:33Z",
+     "last_substantive_change": "2023-04-25T18:31:26Z",
      "versions": 286,
-     "substantive_changes": 3,
+     "substantive_changes": 2,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Law%20Enforcement%20Guidelines.md",
      "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Law%20Enforcement%20Guidelines.md"
@@ -636,7 +636,7 @@
      "last_change": "2026-08-29T00:39:54Z",
      "last_substantive_change": "2026-08-29T00:39:54Z",
      "versions": 417,
-     "substantive_changes": 22,
+     "substantive_changes": 21,
      "declared_dates": [
       "1 January 2025"
      ],
@@ -705,7 +705,7 @@
      "last_change": "2026-10-18T01:05:48Z",
      "last_substantive_change": "2026-06-25T13:02:19Z",
      "versions": 61,
-     "substantive_changes": 14,
+     "substantive_changes": 12,
      "declared_dates": [
       "January 21, 2026"
      ],
@@ -720,7 +720,7 @@
      "last_change": "2026-06-29T00:58:55Z",
      "last_substantive_change": "2026-06-25T13:02:04Z",
      "versions": 176,
-     "substantive_changes": 11,
+     "substantive_changes": 7,
      "declared_dates": [
       "21 January 2026"
      ],
@@ -765,7 +765,7 @@
      "last_change": "2025-09-23T06:02:31Z",
      "last_substantive_change": "2025-08-01T06:02:06Z",
      "versions": 18,
-     "substantive_changes": 12,
+     "substantive_changes": 10,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/Apple/Privacy%20Policy.md",
      "current_url": "https://github.com/OpenTermsArchive/contrib-versions/blob/main/Apple/Privacy%20Policy.md"
@@ -832,7 +832,7 @@
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-09T07:03:32Z",
+   "last_source_commit": "2026-11-09T13:14:53Z",
    "age_days": 0,
    "stale": false
   },
@@ -846,7 +846,7 @@
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-09T01:07:17Z",
+   "last_source_commit": "2026-11-09T13:14:53Z",
    "age_days": 0,
    "stale": false
   }
