@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-05T13:37:53+00:00",
+ "generated_at": "2026-11-09T10:23:56+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -221,10 +221,10 @@
      "name": "Commercial Terms",
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:07Z",
-     "last_change": "2026-10-28T07:02:20Z",
-     "last_substantive_change": "2026-10-20T19:03:39Z",
-     "versions": 5,
-     "substantive_changes": 2,
+     "last_change": "2026-11-09T07:02:15Z",
+     "last_substantive_change": "2026-11-09T07:02:15Z",
+     "versions": 7,
+     "substantive_changes": 3,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Commercial%20Terms.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Commercial%20Terms.md"
@@ -234,9 +234,9 @@
      "name": "Data Processor Agreement",
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:10Z",
-     "last_change": "2026-10-28T19:02:17Z",
+     "last_change": "2026-11-07T07:02:15Z",
      "last_substantive_change": "2026-10-20T19:03:44Z",
-     "versions": 18,
+     "versions": 20,
      "substantive_changes": 10,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Data%20Processor%20Agreement.md",
@@ -260,10 +260,10 @@
      "name": "Privacy Policy",
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:06Z",
-     "last_change": "2026-10-28T07:02:17Z",
-     "last_substantive_change": "2026-10-20T19:03:35Z",
-     "versions": 15,
-     "substantive_changes": 11,
+     "last_change": "2026-11-09T07:02:13Z",
+     "last_substantive_change": "2026-11-09T07:02:13Z",
+     "versions": 17,
+     "substantive_changes": 13,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Privacy%20Policy.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Privacy%20Policy.md"
@@ -273,10 +273,10 @@
      "name": "Terms of Service",
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:05Z",
-     "last_change": "2026-11-05T07:02:02Z",
-     "last_substantive_change": "2026-10-20T19:03:34Z",
-     "versions": 16,
-     "substantive_changes": 5,
+     "last_change": "2026-11-09T07:02:12Z",
+     "last_substantive_change": "2026-11-09T07:02:12Z",
+     "versions": 20,
+     "substantive_changes": 6,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Terms%20of%20Service.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/Claude.ai/Terms%20of%20Service.md"
@@ -286,9 +286,9 @@
      "name": "Trackers Policy",
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:08Z",
-     "last_change": "2026-10-28T07:02:20Z",
+     "last_change": "2026-11-09T07:02:16Z",
      "last_substantive_change": "2026-10-20T19:03:40Z",
-     "versions": 4,
+     "versions": 6,
      "substantive_changes": 1,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Trackers%20Policy.md",
@@ -414,10 +414,10 @@
      "name": "Facebook Commercial Terms",
      "service": "Facebook",
      "tracked_since": "2022-07-11T14:58:21Z",
-     "last_change": "2026-10-30T00:31:56Z",
-     "last_substantive_change": "2026-10-30T00:31:56Z",
-     "versions": 13,
-     "substantive_changes": 8,
+     "last_change": "2026-11-06T00:31:58Z",
+     "last_substantive_change": "2026-11-06T00:31:58Z",
+     "versions": 14,
+     "substantive_changes": 9,
      "declared_dates": [
       "March 6, 2024"
      ],
@@ -571,7 +571,7 @@
      "last_change": "2026-10-30T00:40:25Z",
      "last_substantive_change": "2026-10-30T00:40:25Z",
      "versions": 379,
-     "substantive_changes": 68,
+     "substantive_changes": 67,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Community%20Guidelines.md",
      "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Community%20Guidelines.md"
@@ -620,10 +620,10 @@
      "name": "Instagram Privacy Policy",
      "service": "Instagram",
      "tracked_since": "2022-09-22T07:07:34Z",
-     "last_change": "2026-10-01T00:44:11Z",
-     "last_substantive_change": "2026-10-01T00:44:11Z",
-     "versions": 86,
-     "substantive_changes": 30,
+     "last_change": "2026-11-06T00:40:10Z",
+     "last_substantive_change": "2026-08-22T00:39:56Z",
+     "versions": 87,
+     "substantive_changes": 29,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Privacy%20Policy.md",
      "current_url": "https://github.com/OpenTermsArchive/pga-versions/blob/main/Instagram/Privacy%20Policy.md"
@@ -705,7 +705,7 @@
      "last_change": "2026-10-18T01:05:48Z",
      "last_substantive_change": "2026-06-25T13:02:19Z",
      "versions": 61,
-     "substantive_changes": 23,
+     "substantive_changes": 14,
      "declared_dates": [
       "January 21, 2026"
      ],
@@ -720,7 +720,7 @@
      "last_change": "2026-06-29T00:58:55Z",
      "last_substantive_change": "2026-06-25T13:02:04Z",
      "versions": 176,
-     "substantive_changes": 22,
+     "substantive_changes": 11,
      "declared_dates": [
       "21 January 2026"
      ],
@@ -818,65 +818,40 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-05T07:03:22Z",
+   "last_source_commit": "2026-11-09T07:03:32Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-05T07:03:22Z",
+   "last_source_commit": "2026-11-09T07:03:32Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-05T13:05:48Z",
+   "last_source_commit": "2026-11-09T07:03:32Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-05T13:22:31Z",
+   "last_source_commit": "2026-11-09T00:52:47Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-05T13:05:48Z",
+   "last_source_commit": "2026-11-09T01:07:17Z",
    "age_days": 0,
    "stale": false
   }
  ],
- "upcoming": [
-  {
-   "effective": "2026-11-20",
-   "sentence": "We're updating the Meta Commercial Terms. These updates will go into effect on November 20, 2026. Read the updated Terms.",
-   "link": "https://www.facebook.com/legal/commercial_terms_preview",
-   "link_text": "Read the updated Terms",
-   "first_seen": "2026-10-01T00:31:58Z",
-   "date_history": [
-    {
-     "date": "2026-10-30",
-     "seen": "2026-10-01T00:31:58Z",
-     "change": "2026-10-01--meta--facebook--commercial-terms--c2e2067"
-    },
-    {
-     "date": "2026-11-20",
-     "seen": "2026-10-23T00:32:00Z",
-     "change": "2026-10-23--meta--facebook--commercial-terms--ac71532"
-    }
-   ],
-   "status": "upcoming",
-   "platform": "meta",
-   "platform_name": "Meta",
-   "doc_id": "meta--facebook--commercial-terms",
-   "document": "Facebook Commercial Terms"
-  }
- ],
+ "upcoming": [],
  "topics": [
   {
    "id": "ai",

@@ -1,4 +1,4 @@
-### Section 01: How Anthropic Uses Cookies
+### 01How Anthropic Uses Cookies
 
 [Legal center](https://www.anthropic.com/legal)
 
@@ -12,22 +12,21 @@ Cookie Policy
 *   [03Changes to Our Cookie Policy](#changes-to-our-cookie-policy)
 *   [04Contact Us](#contact-us)
 
-*   Effective
-    
-    Mar 19, 2024
-    
-*   Type
-    
-    Policy
-    
-*   Audience
-    
-    Individual
-    
-*   Language
-    
-    English
-    
+Effective
+
+Mar 19, 2024
+
+Type
+
+Policy
+
+Audience
+
+Individual
+
+Language
+
+English
 
 Anthropic is an AI safety and research company working to build reliable, interpretable, and steerable AI systems.
 

@@ -1,11 +1,11 @@
-### Section 01: Who we are.
+### 01Who we are.
 
 [Legal center](https://www.anthropic.com/legal)
 
 Consumer Terms of Service
 =========================
 
-[Download PDF](https://assets.claude.com/399b2834d66aef85393d3c0ebe02a68c58dd59a3.pdf)
+[Download PDF](https://cdn.sanity.io/files/4zrzovbb/website/399b2834d66aef85393d3c0ebe02a68c58dd59a3.pdf)
 
 *   [01Who we are.](#1-who-we-are)
 *   [02Account creation and access.](#2-account-creation-and-access)
@@ -23,24 +23,25 @@ Consumer Terms of Service
 *   [14In case of disputes](#14-in-case-of-disputes)
 *   [15Appendix 1](#appendix-1)
 
-*   Effective
-    
-    Oct 8, 2025
-    
-*   Type
-    
-    Terms
-    
-*   Audience
-    
-    Individual
-    
-*   Language
-    
-    English
-    
-*   See version history
-    
+Effective
+
+Oct 8, 2025
+
+Type
+
+Terms
+
+Audience
+
+Individual
+
+Language
+
+English
+
+Version history
+
+See version history
 
 **Welcome to Anthropic! Before you access our services, please read these User Terms of Service.**
 
