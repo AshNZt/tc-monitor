@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-10T15:00:11+00:00",
+ "generated_at": "2026-11-10T23:29:27+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -147,13 +147,13 @@
      "name": "Terms of Service",
      "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:01Z",
-     "last_change": "2026-10-16T19:00:15Z",
-     "last_substantive_change": "2026-10-16T19:00:15Z",
-     "versions": 63,
-     "substantive_changes": 15,
+     "last_change": "2026-11-10T19:00:15Z",
+     "last_substantive_change": "2026-11-10T19:00:15Z",
+     "versions": 64,
+     "substantive_changes": 16,
      "declared_dates": [
       "16 January 2026",
-      "16 October 2026"
+      "10 November 2026"
      ],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/ChatGPT/Terms%20of%20Service.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/ChatGPT/Terms%20of%20Service.md"
@@ -818,21 +818,21 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-10T07:03:28Z",
+   "last_source_commit": "2026-11-10T19:07:08Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-10T07:03:28Z",
+   "last_source_commit": "2026-11-10T19:07:08Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-10T13:06:48Z",
+   "last_source_commit": "2026-11-10T19:07:08Z",
    "age_days": 0,
    "stale": false
   },

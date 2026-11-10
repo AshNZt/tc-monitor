@@ -5,7 +5,15 @@
   <link>https://ashnzt.github.io/tc-monitor/</link>
   <description>Text changes to the terms and policies of major technology platforms.</description>
   <language>en</language>
-  <lastBuildDate>Tue, 10 Nov 2026 15:03:38 -0000</lastBuildDate>
+  <lastBuildDate>Tue, 10 Nov 2026 23:33:41 -0000</lastBuildDate>
+  <item>
+    <title>OpenAI · Terms of Service</title>
+    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-11-10--openai--terms-of-service--76b4560</link>
+    <guid isPermaLink="false">2026-11-10--openai--terms-of-service--76b4560</guid>
+    <pubDate>Tue, 10 Nov 2026 19:00:15 +0000</pubDate>
+    <category>OpenAI</category>
+    <description>Sections: 15. Sign in with ChatGPT, Business use of the Services addendum, For Users of GPTs:. (a) Third Party GPTs and Business Agents. Except where OpenAI is identified as the builder of a GPT or Business Agent (as defined in the Businesses with ChatGPT Terms in Section 16 below), GPTs and Business Agents are created by other users</description>
+  </item>
   <item>
     <title>Meta · Facebook Commercial Terms</title>
     <link>https://ashnzt.github.io/tc-monitor/#/change/2026-11-06--meta--facebook--commercial-terms--b0799dd</link>
@@ -397,14 +405,6 @@
     <pubDate>Fri, 24 Jul 2026 11:06:38 +0000</pubDate>
     <category>Meta</category>
     <description>This policy covers two categories of ads: Adult Products and Reproductive Health.Ads promoting or marketing dietary, health or weight loss or weight gain products and services must be targeted to people at least 18 years or older.</description>
-  </item>
-  <item>
-    <title>Meta · Facebook Community Guidelines</title>
-    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-07-24--meta--facebook--community-guidelines--fe26e48</link>
-    <guid isPermaLink="false">2026-07-24--meta--facebook--community-guidelines--fe26e48</guid>
-    <pubDate>Fri, 24 Jul 2026 10:56:44 +0000</pubDate>
-    <category>Meta</category>
-    <description>Sections: Community Standards, Fraud, Scams, and Deceptive Practices, Restricted Goods and Services. Weight loss or weight gain products or services</description>
   </item>
 </channel>
 </rss>
