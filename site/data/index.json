@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-10T01:38:07+00:00",
+ "generated_at": "2026-11-10T15:00:11+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -286,9 +286,9 @@
      "name": "Trackers Policy",
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:08Z",
-     "last_change": "2026-11-09T07:02:16Z",
+     "last_change": "2026-11-10T07:02:13Z",
      "last_substantive_change": "2026-10-20T19:03:40Z",
-     "versions": 6,
+     "versions": 7,
      "substantive_changes": 1,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Trackers%20Policy.md",
@@ -818,35 +818,35 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-09T19:08:09Z",
+   "last_source_commit": "2026-11-10T07:03:28Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-09T19:08:09Z",
+   "last_source_commit": "2026-11-10T07:03:28Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-10T01:11:22Z",
+   "last_source_commit": "2026-11-10T13:06:48Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-10T01:19:28Z",
+   "last_source_commit": "2026-11-10T13:31:23Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-10T01:11:22Z",
+   "last_source_commit": "2026-11-10T13:06:48Z",
    "age_days": 0,
    "stale": false
   }
