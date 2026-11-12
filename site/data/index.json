@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-11T14:32:33+00:00",
+ "generated_at": "2026-11-12T00:49:55+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -273,9 +273,9 @@
      "name": "Terms of Service",
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:05Z",
-     "last_change": "2026-11-09T07:02:12Z",
+     "last_change": "2026-11-11T19:01:44Z",
      "last_substantive_change": "2026-10-20T19:03:34Z",
-     "versions": 20,
+     "versions": 21,
      "substantive_changes": 5,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Terms%20of%20Service.md",
@@ -818,21 +818,21 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-11T07:03:04Z",
+   "last_source_commit": "2026-11-11T19:08:46Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-11T07:03:04Z",
+   "last_source_commit": "2026-11-11T19:08:46Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-11T13:05:32Z",
+   "last_source_commit": "2026-11-11T19:08:46Z",
    "age_days": 0,
    "stale": false
   },
