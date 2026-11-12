@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-12T00:49:55+00:00",
+ "generated_at": "2026-11-12T15:25:11+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -273,9 +273,9 @@
      "name": "Terms of Service",
      "service": "Claude.ai",
      "tracked_since": "2025-08-01T00:32:05Z",
-     "last_change": "2026-11-11T19:01:44Z",
+     "last_change": "2026-11-12T07:02:22Z",
      "last_substantive_change": "2026-10-20T19:03:34Z",
-     "versions": 21,
+     "versions": 22,
      "substantive_changes": 5,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Claude.ai/Terms%20of%20Service.md",
@@ -633,9 +633,9 @@
      "name": "Instagram Terms of Service",
      "service": "Instagram",
      "tracked_since": "2022-07-11T14:58:37Z",
-     "last_change": "2026-08-29T00:39:54Z",
+     "last_change": "2026-11-12T12:39:46Z",
      "last_substantive_change": "2026-08-29T00:39:54Z",
-     "versions": 417,
+     "versions": 419,
      "substantive_changes": 21,
      "declared_dates": [
       "1 January 2025"
@@ -818,35 +818,35 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-11T19:08:46Z",
+   "last_source_commit": "2026-11-12T07:10:42Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-11T19:08:46Z",
+   "last_source_commit": "2026-11-12T07:10:42Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-11T19:08:46Z",
+   "last_source_commit": "2026-11-12T13:05:06Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-11T13:31:02Z",
+   "last_source_commit": "2026-11-12T13:21:39Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-11T13:05:32Z",
+   "last_source_commit": "2026-11-12T13:05:06Z",
    "age_days": 0,
    "stale": false
   }
