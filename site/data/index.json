@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-12T23:42:20+00:00",
+ "generated_at": "2026-11-13T14:42:36+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -101,12 +101,12 @@
      "name": "In-App Purchases Policy",
      "service": "ChatGPT",
      "tracked_since": "2025-07-31T12:05:59Z",
-     "last_change": "2026-07-15T19:01:08Z",
-     "last_substantive_change": "2026-01-02T07:08:57Z",
-     "versions": 6,
-     "substantive_changes": 1,
+     "last_change": "2026-11-13T07:01:09Z",
+     "last_substantive_change": "2026-11-13T07:01:09Z",
+     "versions": 7,
+     "substantive_changes": 2,
      "declared_dates": [
-      "1 January 2026"
+      "12 November 2026"
      ],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/ChatGPT/In-App%20Purchases%20Policy.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/ChatGPT/In-App%20Purchases%20Policy.md"
@@ -147,13 +147,13 @@
      "name": "Terms of Service",
      "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:01Z",
-     "last_change": "2026-11-10T19:00:15Z",
-     "last_substantive_change": "2026-11-10T19:00:15Z",
-     "versions": 64,
-     "substantive_changes": 16,
+     "last_change": "2026-11-13T07:00:14Z",
+     "last_substantive_change": "2026-11-13T07:00:14Z",
+     "versions": 65,
+     "substantive_changes": 17,
      "declared_dates": [
       "16 January 2026",
-      "10 November 2026"
+      "12 November 2026"
      ],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/ChatGPT/Terms%20of%20Service.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/ChatGPT/Terms%20of%20Service.md"
@@ -818,21 +818,21 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-12T19:03:12Z",
+   "last_source_commit": "2026-11-13T07:03:13Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-12T19:03:12Z",
+   "last_source_commit": "2026-11-13T07:03:13Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-12T19:03:12Z",
+   "last_source_commit": "2026-11-13T13:06:23Z",
    "age_days": 0,
    "stale": false
   },
@@ -840,13 +840,13 @@
    "platform": "meta",
    "name": "Meta",
    "last_source_commit": "2026-11-12T13:21:39Z",
-   "age_days": 0,
+   "age_days": 1,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-12T13:05:06Z",
+   "last_source_commit": "2026-11-13T13:06:23Z",
    "age_days": 0,
    "stale": false
   }
