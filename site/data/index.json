@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-13T23:39:58+00:00",
+ "generated_at": "2026-11-14T13:39:04+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -147,13 +147,13 @@
      "name": "Terms of Service",
      "service": "ChatGPT",
      "tracked_since": "2024-02-20T18:30:01Z",
-     "last_change": "2026-11-13T07:00:14Z",
-     "last_substantive_change": "2026-11-13T07:00:14Z",
-     "versions": 65,
-     "substantive_changes": 17,
+     "last_change": "2026-11-14T07:00:14Z",
+     "last_substantive_change": "2026-11-14T07:00:14Z",
+     "versions": 66,
+     "substantive_changes": 18,
      "declared_dates": [
       "16 January 2026",
-      "12 November 2026"
+      "13 November 2026"
      ],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/ChatGPT/Terms%20of%20Service.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/ChatGPT/Terms%20of%20Service.md"
@@ -788,9 +788,9 @@
      "name": "App Store Review Guidelines",
      "service": "App Store",
      "tracked_since": "2020-07-29T14:30:08Z",
-     "last_change": "2026-10-17T00:33:54Z",
+     "last_change": "2026-11-14T00:32:53Z",
      "last_substantive_change": "2026-10-17T00:33:54Z",
-     "versions": 55,
+     "versions": 56,
      "substantive_changes": 32,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/App%20Store/Review%20Guidelines.md",
@@ -818,35 +818,35 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-13T19:09:35Z",
+   "last_source_commit": "2026-11-14T07:03:31Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-13T19:09:35Z",
+   "last_source_commit": "2026-11-14T07:03:31Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-13T19:09:35Z",
+   "last_source_commit": "2026-11-14T13:05:32Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-12T13:21:39Z",
-   "age_days": 1,
+   "last_source_commit": "2026-11-14T13:09:12Z",
+   "age_days": 0,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-13T13:06:23Z",
+   "last_source_commit": "2026-11-14T13:05:32Z",
    "age_days": 0,
    "stale": false
   }
