@@ -69,10 +69,17 @@ jobs:
           echo "Could not push the data commit after 3 attempts"
           exit 1
 
-      - name: Is this the weekly run? (first scheduled run on Monday)
+      - name: Is this the weekly run? (first scheduled run of the week, Monday or later)
         id: weekly
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%u)" = "1" ] && [ "$(date -u +%H)" -lt 12 ]; then
+          # GitHub often starts scheduled runs hours late, so no fixed hour is checked:
+          # the first scheduled run of each ISO week sends the digest, and
+          # site/data/digest-week.txt records the week so it is sent only once.
+          WEEK=$(date -u +%G-W%V)
+          LAST=$(cat site/data/digest-week.txt 2>/dev/null || true)
+          echo "This week: $WEEK, last digest: ${LAST:-never}"
+          echo "week=$WEEK" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$WEEK" != "$LAST" ]; then
             echo "yes=true" >> "$GITHUB_OUTPUT"
           else
             echo "yes=false" >> "$GITHUB_OUTPUT"
@@ -104,3 +111,16 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
         run: python scripts/digest.py email
+
+      - name: Remember that this week's digest was sent
+        if: steps.weekly.outputs.yes == 'true'
+        run: |
+          echo "${{ steps.weekly.outputs.week }}" > site/data/digest-week.txt
+          git add site/data/digest-week.txt
+          git commit -m "Weekly digest ${{ steps.weekly.outputs.week }}"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "Push attempt $attempt failed, retrying in 15 seconds"
+            sleep 15
+          done
+          exit 1
