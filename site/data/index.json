@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-18T01:00:35+00:00",
+ "generated_at": "2026-11-18T15:48:30+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -717,9 +717,9 @@
      "name": "Threads Terms of Service",
      "service": "Threads",
      "tracked_since": "2024-03-14T18:33:36Z",
-     "last_change": "2026-06-29T00:58:55Z",
+     "last_change": "2026-11-18T13:09:28Z",
      "last_substantive_change": "2026-06-25T13:02:04Z",
-     "versions": 176,
+     "versions": 178,
      "substantive_changes": 7,
      "declared_dates": [
       "21 January 2026"
@@ -818,35 +818,35 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-17T19:09:21Z",
+   "last_source_commit": "2026-11-18T07:04:04Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-17T19:09:21Z",
+   "last_source_commit": "2026-11-18T07:04:04Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-17T19:09:21Z",
+   "last_source_commit": "2026-11-18T13:03:24Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-17T13:19:50Z",
+   "last_source_commit": "2026-11-18T13:10:08Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-17T13:08:05Z",
+   "last_source_commit": "2026-11-18T13:03:24Z",
    "age_days": 0,
    "stale": false
   }
