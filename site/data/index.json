@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-19T00:29:07+00:00",
+ "generated_at": "2026-11-19T15:53:18+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -370,9 +370,9 @@
      "name": "Google Terms of Service",
      "service": "Google",
      "tracked_since": "2020-07-29T14:30:20Z",
-     "last_change": "2026-07-30T12:41:07Z",
+     "last_change": "2026-11-19T12:41:10Z",
      "last_substantive_change": "2026-07-30T12:41:07Z",
-     "versions": 29,
+     "versions": 30,
      "substantive_changes": 13,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/contrib-versions/commits/main/Google/Terms%20of%20Service.md",
@@ -818,35 +818,35 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-18T19:03:17Z",
+   "last_source_commit": "2026-11-19T07:02:55Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-18T19:03:17Z",
+   "last_source_commit": "2026-11-19T07:02:55Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-18T19:03:17Z",
+   "last_source_commit": "2026-11-19T13:12:12Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-18T13:10:08Z",
+   "last_source_commit": "2026-11-19T01:06:08Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-18T13:03:24Z",
+   "last_source_commit": "2026-11-19T13:12:12Z",
    "age_days": 0,
    "stale": false
   }
