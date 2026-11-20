@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-19T15:53:18+00:00",
+ "generated_at": "2026-11-20T00:41:47+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -163,12 +163,12 @@
      "name": "Trackers Policy",
      "service": "ChatGPT",
      "tracked_since": "2025-07-31T12:06:45Z",
-     "last_change": "2026-10-23T19:01:50Z",
-     "last_substantive_change": "2026-10-23T19:01:50Z",
-     "versions": 21,
-     "substantive_changes": 15,
+     "last_change": "2026-11-19T19:01:55Z",
+     "last_substantive_change": "2026-11-19T19:01:55Z",
+     "versions": 22,
+     "substantive_changes": 16,
      "declared_dates": [
-      "22 October 2026"
+      "19 November 2026"
      ],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/ChatGPT/Trackers%20Policy.md",
      "current_url": "https://github.com/OpenTermsArchive/GenAI-versions/blob/main/ChatGPT/Trackers%20Policy.md"
@@ -344,9 +344,9 @@
      "name": "Google Generative AI Services Terms of Service",
      "service": "Google Generative AI Services",
      "tracked_since": "2024-05-21T18:30:50Z",
-     "last_change": "2026-07-30T19:04:13Z",
+     "last_change": "2026-11-19T19:03:53Z",
      "last_substantive_change": "2026-07-30T19:04:13Z",
-     "versions": 7,
+     "versions": 8,
      "substantive_changes": 3,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/GenAI-versions/commits/main/Google%20Generative%20AI%20Services/Terms%20of%20Service.md",
@@ -818,21 +818,21 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-19T07:02:55Z",
+   "last_source_commit": "2026-11-19T19:03:53Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-19T07:02:55Z",
+   "last_source_commit": "2026-11-19T19:03:53Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-19T13:12:12Z",
+   "last_source_commit": "2026-11-19T19:03:53Z",
    "age_days": 0,
    "stale": false
   },

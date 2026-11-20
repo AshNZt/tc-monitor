@@ -5,7 +5,15 @@
   <link>https://ashnzt.github.io/tc-monitor/</link>
   <description>Text changes to the terms and policies of major technology platforms.</description>
   <language>en</language>
-  <lastBuildDate>Thu, 19 Nov 2026 15:56:40 -0000</lastBuildDate>
+  <lastBuildDate>Fri, 20 Nov 2026 00:45:59 -0000</lastBuildDate>
+  <item>
+    <title>OpenAI · Trackers Policy</title>
+    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-11-19--openai--trackers-policy--f948bde</link>
+    <guid isPermaLink="false">2026-11-19--openai--trackers-policy--f948bde</guid>
+    <pubDate>Thu, 19 Nov 2026 19:01:55 +0000</pubDate>
+    <category>OpenAI</category>
+    <description>Sections: Analytics cookies, Necessary cookies. OpenAI oai-mweb-route 7 days Service functionality chatgpt.com</description>
+  </item>
   <item>
     <title>OpenAI · Terms of Service</title>
     <link>https://ashnzt.github.io/tc-monitor/#/change/2026-11-14--openai--terms-of-service--b662e35</link>
@@ -397,14 +405,6 @@
     <pubDate>Thu, 30 Jul 2026 12:41:07 +0000</pubDate>
     <category>Google</category>
     <description>Effective 30 July 2026 Archived versions Download PDF Sections: About these terms, Develop, improve and update Google services, For business users and organisations only, Google Terms of Service. </description>
-  </item>
-  <item>
-    <title>Meta · Instagram Terms of Service</title>
-    <link>https://ashnzt.github.io/tc-monitor/#/change/2026-07-28--meta--instagram--terms-of-service--6819028</link>
-    <guid isPermaLink="false">2026-07-28--meta--instagram--terms-of-service--6819028</guid>
-    <pubDate>Tue, 28 Jul 2026 12:39:53 +0000</pubDate>
-    <category>Meta</category>
-    <description>Sections: Terms and Imprint. This includes creating accounts or accessing or collecting information in an automated way (including by engaging in Automated Data Collection as defined in the Automated Data Collection Terms) without our express permission, regardless of </description>
   </item>
 </channel>
 </rss>
