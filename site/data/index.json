@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-20T00:41:47+00:00",
+ "generated_at": "2026-11-20T15:35:57+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -818,35 +818,35 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-19T19:03:53Z",
+   "last_source_commit": "2026-11-20T07:03:03Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-19T19:03:53Z",
+   "last_source_commit": "2026-11-20T07:03:03Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-19T19:03:53Z",
+   "last_source_commit": "2026-11-20T13:06:18Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-19T01:06:08Z",
+   "last_source_commit": "2026-11-20T13:31:47Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-19T13:12:12Z",
+   "last_source_commit": "2026-11-20T13:06:18Z",
    "age_days": 0,
    "stale": false
   }
