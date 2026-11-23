@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-22T23:39:19+00:00",
+ "generated_at": "2026-11-23T18:25:58+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -633,9 +633,9 @@
      "name": "Instagram Terms of Service",
      "service": "Instagram",
      "tracked_since": "2022-07-11T14:58:37Z",
-     "last_change": "2026-11-22T12:41:18Z",
+     "last_change": "2026-11-23T00:39:48Z",
      "last_substantive_change": "2026-08-29T00:39:54Z",
-     "versions": 422,
+     "versions": 423,
      "substantive_changes": 21,
      "declared_dates": [
       "1 January 2025"
@@ -818,35 +818,35 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-22T19:08:53Z",
+   "last_source_commit": "2026-11-23T07:09:00Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-22T19:08:53Z",
+   "last_source_commit": "2026-11-23T07:09:00Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-22T19:08:53Z",
+   "last_source_commit": "2026-11-23T13:04:01Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-22T13:11:29Z",
+   "last_source_commit": "2026-11-23T12:52:48Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-22T13:06:26Z",
+   "last_source_commit": "2026-11-23T13:04:01Z",
    "age_days": 0,
    "stale": false
   }
