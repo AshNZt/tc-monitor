@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-28T01:29:31+00:00",
+ "generated_at": "2026-11-28T15:39:57+00:00",
  "author": {
   "name": "Alessandro Morigi",
   "url": "https://github.com/AshNZt"
@@ -607,9 +607,9 @@
      "name": "Instagram Law Enforcement Guidelines",
      "service": "Instagram",
      "tracked_since": "2022-07-11T14:59:20Z",
-     "last_change": "2026-11-27T12:47:24Z",
+     "last_change": "2026-11-28T00:46:47Z",
      "last_substantive_change": "2023-04-25T18:31:26Z",
-     "versions": 289,
+     "versions": 290,
      "substantive_changes": 2,
      "declared_dates": [],
      "history_url": "https://github.com/OpenTermsArchive/pga-versions/commits/main/Instagram/Law%20Enforcement%20Guidelines.md",
@@ -818,35 +818,35 @@
   {
    "platform": "openai",
    "name": "OpenAI",
-   "last_source_commit": "2026-11-27T19:02:57Z",
+   "last_source_commit": "2026-11-28T07:02:55Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "anthropic",
    "name": "Anthropic",
-   "last_source_commit": "2026-11-27T19:02:57Z",
+   "last_source_commit": "2026-11-28T07:02:55Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "google",
    "name": "Google",
-   "last_source_commit": "2026-11-28T01:08:52Z",
+   "last_source_commit": "2026-11-28T13:08:25Z",
    "age_days": 0,
    "stale": false
   },
   {
    "platform": "meta",
    "name": "Meta",
-   "last_source_commit": "2026-11-27T12:47:24Z",
-   "age_days": 0,
+   "last_source_commit": "2026-11-27T01:05:59Z",
+   "age_days": 1,
    "stale": false
   },
   {
    "platform": "apple",
    "name": "Apple",
-   "last_source_commit": "2026-11-28T01:08:52Z",
+   "last_source_commit": "2026-11-28T13:08:25Z",
    "age_days": 0,
    "stale": false
   }
